@@ -1,0 +1,33 @@
+{
+  "name": "rendering-engine-sample",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "gulp build",
+    "watch": "gulp watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soyemi/rendering-engine-sample.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/soyemi/rendering-engine-sample/issues"
+  },
+  "homepage": "https://github.com/soyemi/rendering-engine-sample#readme",
+  "dependencies": {
+    "browser-sync": "^2.26.3",
+    "rendering-engine": "file:../rendering-engine"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "rollup": "^0.66.6",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-node-globals": "^1.4.0",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-typescript2": "^0.17.1",
+    "typescript": "^3.1.3"
+  }
+}
