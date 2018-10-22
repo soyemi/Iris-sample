@@ -3,10 +3,40 @@
 
     <script src="renderer.js"></script>
     <script src="samples.js"></script>
+    <style>
+    html,body{
+        padding: 0;
+        margin: 0;
+        border: 0;
+    }
+
+    #sampleCanvas{
+        flex: 1;
+        background-color: aliceblue;
+    }
+
+    .wrap{
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+    }
+    .sampleList{
+        width: 150px;
+    }
+    </style>
 </header>
 
 <body>
-    hello
+    <div class="wrap">
+        <div class="sampleList">List</div>
+        <canvas id="sampleCanvas"></canvas>
+    </div>
+    
+    <script>
+        let canvas = document.getElementById('sampleCanvas');
+        var runner = new samples.SampleRunner(canvas);
+    </script>
 </body>
 
 </html>

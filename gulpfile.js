@@ -9,19 +9,18 @@ gulp.task('build',()=>{
     //mergeShader();
     build();
 
-    copyLibs();
 });
 
 gulp.task('watch',()=>{
     //mergeShader();
     build();
-    copyLibs();
+
 
     gulp.watch('./samples/**/*.ts',null,()=>{
         build();
     });
 
-    gulp.watch('./node_modules/rendering-engine/dist/renderer.js',null,copyLibs);
+    //gulp.watch('./node_modules/rendering-engine/dist/renderer.js',null,copyLibs);
 
     // gulp.watch('./res/shaders/**/*.glsl',null,()=>{
     //     mergeShader();
@@ -44,6 +43,9 @@ var onBuild =false;
 
 function build(){
     if(onBuild == true) return;
+
+    copyLibs();
+
     onBuild = true;
     console.log('[Compile Script]');
     child_process.exec('rollup -c rollup.config.ts',(error,stdout,stderr)=>{
@@ -57,7 +59,8 @@ function build(){
 gulp.task('shader',mergeShader)
 
 function copyLibs(){
-    fs.copyFileSync('./node_modules/rendering-engine/dist/renderer.js','./docs/renderer.js');
+    const path = './node_modules/rendering-engine/dist/renderer.js';
+    fs.copyFileSync(path,'./docs/renderer.js');
 }
 
 function mergeShader(){
