@@ -19,7 +19,7 @@
   "homepage": "https://github.com/soyemi/rendering-engine-sample#readme",
   "dependencies": {
     "browser-sync": "^2.26.3",
-    "rendering-engine": "file:../rendering-engine"
+    "iris": "../rendering-engine"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
