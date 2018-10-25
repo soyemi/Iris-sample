@@ -44,8 +44,6 @@ var onBuild =false;
 function build(){
     if(onBuild == true) return;
 
-    copyLibs();
-
     onBuild = true;
     console.log('[Compile Script]');
     child_process.exec('rollup -c rollup.config.ts',(error,stdout,stderr)=>{
@@ -58,10 +56,6 @@ function build(){
 
 gulp.task('shader',mergeShader)
 
-function copyLibs(){
-    const path = './node_modules/rendering-engine/dist/renderer.js';
-    fs.copyFileSync(path,'./docs/renderer.js');
-}
 
 function mergeShader(){
     console.log('[Compile Shader]');

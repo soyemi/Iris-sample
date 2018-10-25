@@ -1,5 +1,5 @@
 {
-  "name": "rendering-engine-sample",
+  "name": "iris-gl-sample",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -19,7 +19,7 @@
   "homepage": "https://github.com/soyemi/rendering-engine-sample#readme",
   "dependencies": {
     "browser-sync": "^2.26.3",
-    "iris": "../rendering-engine"
+    "iris-gl": "file:../iris"
   },
   "devDependencies": {
     "gulp": "^3.9.1",

@@ -1,4 +1,4 @@
-import{ GraphicsRender, FrameTimer, GLUtility, Input} from 'iris';
+import { GraphicsRender,GLUtility, FrameTimer, Input} from 'iris-gl';
 
 export interface IProgram{
 

@@ -1,5 +1,5 @@
 import { IProgram, SampleProgram } from "../SampleProgram";
-import { GraphicsRender } from "renderer";
+import { GraphicsRender } from "iris-gl";
 
 @SampleProgram('Path Tracer')
 export class PathTracer implements IProgram{

@@ -8,13 +8,17 @@ import process from 'process';
 export default{
     input: `samples/index.ts`,
     output: [
-        {file: 'docs/samples.js', name: 'samples', format: 'iife',sourcemap: false}
+        {file: 'docs/samples.js', name: 'samples', format: 'iife'}
     ],
+    onwarn: ( warning, next ) => {
+        if ( warning.code === 'THIS_IS_UNDEFINED' ) return;
+        next( warning );
+    },
     external: [],
     plugins: [
         typescript({
             tsconfigOverride: {
-                compilerOptions: { module: 'es2015'},
+                compilerOptions: { module: 'es2015',declaration:false},
             },
             tsconfig: 'tsconfig.json',
             useTsconfigDeclarationDir:true
