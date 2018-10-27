@@ -4,7 +4,6 @@ const fs = require('fs');
 
 const browsersync = require('browser-sync');
 
-
 gulp.task('build',()=>{
     //mergeShader();
     build();
@@ -22,9 +21,9 @@ gulp.task('watch',()=>{
 
     //gulp.watch('./node_modules/rendering-engine/dist/renderer.js',null,copyLibs);
 
-    // gulp.watch('./res/shaders/**/*.glsl',null,()=>{
-    //     mergeShader();
-    // });
+    gulp.watch('./samples/**/*.glsl',null,()=>{
+        mergeShader();
+    });
     browsersync.init({
         server: {
             baseDir: './docs',
@@ -59,7 +58,7 @@ gulp.task('shader',mergeShader)
 
 function mergeShader(){
     console.log('[Compile Shader]');
-    let basepath = './res/shaders/';
+    let basepath = './samples/';
     let files =  fs.readdirSync(basepath);
     let sources = {};
     files.forEach(f=>{

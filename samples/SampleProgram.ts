@@ -1,12 +1,10 @@
-import { GraphicsRender,GLUtility, FrameTimer, Input} from 'iris-gl';
+import { GraphicsRender,GLUtility, FrameTimer, Input, WindowUtility} from 'iris-gl';
 
 export interface IProgram{
-
     onInit();
     onSetupRender(grender:GraphicsRender);
     onSetupScene();
     onFrame(ts:number);
-
     onRelease();
 }
 
@@ -17,15 +15,12 @@ export function SampleProgram(name:string){
 }
 
 export class SampleRunner{
-
     private static samples:{[name:string]:any} = {};
     private static s_startSample:string;
 
     private m_canvas:HTMLCanvasElement;
     private m_graphicsRender:GraphicsRender;
-
     private m_curprogram:IProgram;
-
     private m_timer:FrameTimer;
 
     public constructor(canvas:HTMLCanvasElement){
@@ -48,6 +43,15 @@ export class SampleRunner{
 
         GLUtility.setTargetFPS(60);
         GLUtility.registerOnFrame(this.onFrame.bind(this));
+
+        this.onResize();
+        WindowUtility.setOnResizeFunc(this.onResize.bind(this));
+    }
+
+    private onResize(){
+        const canvas = this.m_canvas;
+        const grender = this.m_graphicsRender;
+        grender.resizeCanvas(canvas.clientWidth,canvas.clientHeight);
     }
 
     public onFrame(ts:number){

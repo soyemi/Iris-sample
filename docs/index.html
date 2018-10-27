@@ -9,15 +9,15 @@
     }
 
     #sampleCanvas{
-        flex: 1;
         background-color: aliceblue;
+        height: 100%;
+        width: 100%;
     }
 
     .wrap{
         width: 100%;
         height: 100%;
-        display: flex;
-        flex-direction: row;
+        position: relative;
     }
     .sampleList{
         width: 150px;
@@ -27,7 +27,6 @@
 
 <body>
     <div class="wrap">
-        <div class="sampleList">List</div>
         <canvas id="sampleCanvas"></canvas>
     </div>
     
