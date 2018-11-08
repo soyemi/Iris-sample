@@ -1,104 +1,104 @@
-import { PipelineBase, GLUtility, GraphicsRender,ShaderFX, GLProgram, Mesh, Material} from "iris-gl";
-import { Texture, TextureCreationDesc } from "iris-gl/dist/Texture";
-import { GL } from "iris-gl/dist/GL";
-import { Scene } from "iris-gl/dist/Scene";
-import { ShaderSource } from "iris-gl/dist/shaderfx/ShaderSource";
-import { Shader, ShaderProgram } from "iris-gl/dist/shaderfx/Shader";
-import { ShaderFXLibs } from "iris-gl/dist/shaderfx/ShaderFXLibs";
-import { MeshRender } from "iris-gl/dist/MeshRender";
+// import { PipelineBase, GLUtility, GraphicsRender,ShaderFX, GLProgram, Mesh, Material} from "iris-gl";
+// import { Texture, TextureCreationDesc } from "iris-gl/dist/Texture";
+// import { GL } from "iris-gl/dist/GL";
+// import { Scene } from "iris-gl/dist/Scene";
+// import { ShaderSource } from "iris-gl/dist/shaderfx/ShaderSource";
+// import { Shader, ShaderProgram } from "iris-gl/dist/shaderfx/Shader";
+// import { ShaderFXLibs } from "iris-gl/dist/shaderfx/ShaderFXLibs";
+// import { MeshRender } from "iris-gl/dist/MeshRender";
 
 
-export class PathTracerPipeline extends PipelineBase{
+// export class PathTracerPipeline extends PipelineBase{
 
-    private m_fbBack:WebGLFramebuffer;
-    private m_fbFront:WebGLFramebuffer;
+//     private m_fbBack:WebGLFramebuffer;
+//     private m_fbFront:WebGLFramebuffer;
 
-    private m_texBack:Texture;
-    private m_texFront:Texture;
+//     private m_texBack:Texture;
+//     private m_texFront:Texture;
 
-    private static SH_PATHTRACER:ShaderSource;
+//     private static SH_PATHTRACER:ShaderSource;
 
-    private m_shader:Shader;
+//     private m_shader:Shader;
 
-    private m_meshrender:MeshRender;
+//     private m_meshrender:MeshRender;
 
-    private m_setup:boolean = false;
+//     private m_setup:boolean = false;
 
-    public async init(){
-        if(this.m_inited) return;
-        super.init();
+//     public async init(){
+//         if(this.m_inited) return;
+//         super.init();
 
-        const gl = this.gl;
+//         const gl = this.gl;
 
-        let fbwidth = this.mainFrameBufferWidth;
-        let fbheight =this.mainFrameBufferHeight;
+//         let fbwidth = this.mainFrameBufferWidth;
+//         let fbheight =this.mainFrameBufferHeight;
 
-        let desc = new TextureCreationDesc(gl.RGB,gl.RGB8,false);
-        this.m_texBack = Texture.createTexture2D(fbwidth,fbheight,desc,this.glctx);
-        this.m_texFront = Texture.createTexture2D(fbwidth,fbheight,desc,this.glctx);
+//         let desc = new TextureCreationDesc(gl.RGB,gl.RGB8,false);
+//         this.m_texBack = Texture.createTexture2D(fbwidth,fbheight,desc,this.glctx);
+//         this.m_texFront = Texture.createTexture2D(fbwidth,fbheight,desc,this.glctx);
 
-        let fbback = gl.createFramebuffer();
-        gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,fbback);
-        gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,this.m_texBack.rawtexture,0);
-        gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,null);
-        this.m_fbBack = fbback;
+//         let fbback = gl.createFramebuffer();
+//         gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,fbback);
+//         gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,this.m_texBack.rawtexture,0);
+//         gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,null);
+//         this.m_fbBack = fbback;
 
-        let fbfront = gl.createFramebuffer();
-        gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,fbfront);
-        gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,this.m_texFront.rawtexture,0);
-        gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,null);
-        this.m_fbFront = fbfront;
+//         let fbfront = gl.createFramebuffer();
+//         gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,fbfront);
+//         gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,this.m_texFront.rawtexture,0);
+//         gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,null);
+//         this.m_fbFront = fbfront;
 
-        if(PathTracerPipeline.SH_PATHTRACER == null){
-            PathTracerPipeline.SH_PATHTRACER = await ShaderSource.load('res/path-tracer/pathtracer.glsl','pathtracer');
-        }
+//         if(PathTracerPipeline.SH_PATHTRACER == null){
+//             PathTracerPipeline.SH_PATHTRACER = await ShaderSource.load('res/path-tracer/pathtracer.glsl','pathtracer');
+//         }
 
-        if(this.m_shader ==null){
-            this.m_shader = ShaderFX.compileShaders(this.glctx,PathTracerPipeline.SH_PATHTRACER);
-        }
+//         if(this.m_shader ==null){
+//             this.m_shader = ShaderFX.compileShaders(this.glctx,PathTracerPipeline.SH_PATHTRACER);
+//         }
 
-        let mat = new Material(this.m_shader);
-        this.m_meshrender = new MeshRender(Mesh.Quad,mat);
+//         let mat = new Material(this.m_shader);
+//         this.m_meshrender = new MeshRender(Mesh.Quad,mat);
 
-        this.m_setup = true;
-    }
+//         this.m_setup = true;
+//     }
 
-    public release(){
-        if(!this.m_inited) return;
-        super.release();
+//     public release(){
+//         if(!this.m_inited) return;
+//         super.release();
 
-        const gl = this.gl;
-        const glctx = this.glctx;
-        if(this.m_fbBack != null){
-            gl.deleteFramebuffer(this.m_fbBack);
-            this.m_fbBack = null;
-        }
+//         const gl = this.gl;
+//         const glctx = this.glctx;
+//         if(this.m_fbBack != null){
+//             gl.deleteFramebuffer(this.m_fbBack);
+//             this.m_fbBack = null;
+//         }
 
-        if(this.m_fbFront != null){
-            gl.deleteFramebuffer(this.m_fbFront);
-            this.m_fbFront = null;
-        }
+//         if(this.m_fbFront != null){
+//             gl.deleteFramebuffer(this.m_fbFront);
+//             this.m_fbFront = null;
+//         }
 
-        if(this.m_texBack != null){
-            this.m_texBack.release(glctx);
-            this.m_texBack = null;
-        }
-        if(this.m_texFront != null){
-            this.m_texFront.release(glctx);
-            this.m_texFront = null;
-        }
-    }
+//         if(this.m_texBack != null){
+//             this.m_texBack.release(glctx);
+//             this.m_texBack = null;
+//         }
+//         if(this.m_texFront != null){
+//             this.m_texFront.release(glctx);
+//             this.m_texFront = null;
+//         }
+//     }
 
-    public exec(scene: Scene){
-        if(!this.m_setup) return;
-        const gl = this.gl;
-        let camera = scene.camera;
-        camera.aspect = this.mainFrameBufferAspect;
-        this.updateUniformCamera(camera);
+//     public exec(scene: Scene){
+//         if(!this.m_setup) return;
+//         const gl = this.gl;
+//         let camera = scene.camera;
+//         camera.aspect = this.mainFrameBufferAspect;
+//         this.updateUniformCamera(camera);
         
-        this.bindTargetFrameBuffer();
+//         this.bindTargetFrameBuffer();
 
-        this.drawMeshRender(this.m_meshrender);
-    }
+//         this.drawMeshRender(this.m_meshrender);
+//     }
 
-}
+// }
