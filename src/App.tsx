@@ -17,14 +17,18 @@ class App extends React.Component {
   }
 
   public render() {
-    const data = [
-      {key:"AAA",path:"XXXX"},
-      {key:"VVV",path:"XXXX"},
-    ];
+    let data = [];
+    const samples = SampleRunner.Samples;
+    for (const name in samples) {
+      if (samples.hasOwnProperty(name)) {
+        data.push({key:name,path:name})
+      }
+    }
     return (
       <div className="App">
         <canvas ref={this.canvas} className="AppCanvas"></canvas>
         <div className="AppMenu">
+          <h2 className="AppTitle">Iris-samples</h2>
           <SampleMenu sampleEnter={data}/>
         </div>
       </div>

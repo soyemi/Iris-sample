@@ -5,11 +5,11 @@ import { ShaderSource } from "iris-gl/dist/shaderfx/ShaderSource";
 import { Shader } from "iris-gl/dist/shaderfx/Shader";
 import { MeshRender } from "iris-gl/dist/MeshRender";
 
-export class PathTracerPipeline extends PipelineBase{
+const sh_pathtracer = require('./res/pathtracer.glsl');
 
+export class PathTracerPipeline extends PipelineBase{
     private m_fbBack?:WebGLFramebuffer;
     private m_fbFront:WebGLFramebuffer;
-
     private m_texBack:Texture;
     private m_texFront:Texture;
 
@@ -47,7 +47,8 @@ export class PathTracerPipeline extends PipelineBase{
         this.m_fbFront = fbfront;
 
         if(PathTracerPipeline.SH_PATHTRACER == null){
-            PathTracerPipeline.SH_PATHTRACER = await ShaderSource.load('res/path-tracer/pathtracer.glsl','pathtracer');
+
+            PathTracerPipeline.SH_PATHTRACER = await ShaderSource.load(sh_pathtracer,'pathtracer');
         }
 
         if(this.m_shader ==null){

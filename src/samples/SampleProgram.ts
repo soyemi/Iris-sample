@@ -9,6 +9,7 @@ export interface IProgram{
     onRelease();
 }
 
+
 export class SampleRunner{
     private static s_samples:{[name:string]:any} = {};
     private static s_setup:boolean = false;
@@ -19,32 +20,20 @@ export class SampleRunner{
     private m_curprogram:IProgram;
     private m_timer:FrameTimer;
 
+    public static get Samples():{[name:string]:any}{
+        return SampleRunner.s_samples;
+    }
+
     public constructor(canvas:HTMLCanvasElement){
-        SampleRunner.Setup();
 
         this.m_timer = new FrameTimer(false);
 
         this.m_canvas = canvas;
-        let grender = new GraphicsRender(canvas);
+        const grender = new GraphicsRender(canvas);
         this.m_graphicsRender = grender;
 
         let sname= SampleRunner.s_startSample;
-        let sproto = SampleRunner.s_samples[sname];
-
-        if(sproto == null) return;
-
-        let program = <IProgram>Object.create(sproto.prototype);
-        program.onInit();
-        program.onSetupRender(grender);
-        program.onSetupScene();
-
-        this.m_curprogram = program;
-
-        GLUtility.setTargetFPS(60);
-        GLUtility.registerOnFrame(this.onFrame.bind(this));
-
-        this.onResize();
-        WindowUtility.setOnResizeFunc(this.onResize.bind(this));
+        this.LoadSample(sname);
     }
 
     private onResize(){
@@ -55,10 +44,12 @@ export class SampleRunner{
 
     public onFrame(ts:number){
         let delta = this.m_timer.tick(ts);
-        Input.onFrame(delta/1000);
+
+        let dt = delta/ 1000;
+        Input.onFrame(dt);
 
         let program =this.m_curprogram;
-        program.onFrame(ts);
+        program.onFrame(dt);
     }
 
     public static registerSample(target:any,name){
@@ -80,5 +71,27 @@ export class SampleRunner{
         SampleRunner.s_setup = true;
 
     }
-    
+
+    public async LoadSample(sname:string):Promise<boolean>{
+        let sproto = SampleRunner.s_samples[sname];
+        if(sproto == null) return false;
+
+        const grender= this.m_graphicsRender;
+        let program = <IProgram>Object.create(sproto.prototype);
+        await program.onInit();
+        await program.onSetupRender(grender);
+        await program.onSetupScene();
+
+        this.m_curprogram = program;
+
+        GLUtility.setTargetFPS(60);
+        GLUtility.registerOnFrame(this.onFrame.bind(this));
+
+        this.onResize();
+        WindowUtility.setOnResizeFunc(this.onResize.bind(this));
+
+        return true;
+    }
 }
+
+SampleRunner.Setup();

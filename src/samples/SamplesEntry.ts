@@ -1,7 +1,11 @@
-import { PathTracer } from "./path-tracer/PathTracer";
+import { CubeSample } from './basic/CubeSample';
 
+// import { PathTracer } from "./path-tracer/PathTracer";
+// import { GLTFSample } from './gltf/GLTFSample';
 
 
 export const SAMPLES_ENTRY = {
-    "path-tracer":PathTracer
+    // "gltf-rendering":GLTFSample,
+    //"path-tracer":PathTracer
+    "cube":CubeSample
 }
