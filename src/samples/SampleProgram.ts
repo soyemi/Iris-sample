@@ -1,4 +1,5 @@
 import { GraphicsRender,GLUtility, FrameTimer, Input, WindowUtility} from 'iris-gl';
+import { SAMPLES_ENTRY } from './SamplesEntry';
 
 export interface IProgram{
     onInit();
@@ -8,14 +9,9 @@ export interface IProgram{
     onRelease();
 }
 
-export function SampleProgram(name:string){
-    return function(constructor: Function){
-        SampleRunner.registerSample(constructor.prototype,name);
-    }
-}
-
 export class SampleRunner{
-    private static samples:{[name:string]:any} = {};
+    private static s_samples:{[name:string]:any} = {};
+    private static s_setup:boolean = false;
     private static s_startSample:string;
 
     private m_canvas:HTMLCanvasElement;
@@ -24,6 +20,8 @@ export class SampleRunner{
     private m_timer:FrameTimer;
 
     public constructor(canvas:HTMLCanvasElement){
+        SampleRunner.Setup();
+
         this.m_timer = new FrameTimer(false);
 
         this.m_canvas = canvas;
@@ -31,10 +29,11 @@ export class SampleRunner{
         this.m_graphicsRender = grender;
 
         let sname= SampleRunner.s_startSample;
-        let sproto = SampleRunner.samples[sname];
+        let sproto = SampleRunner.s_samples[sname];
 
         if(sproto == null) return;
-        let program = <IProgram>Object.create(sproto);
+
+        let program = <IProgram>Object.create(sproto.prototype);
         program.onInit();
         program.onSetupRender(grender);
         program.onSetupScene();
@@ -62,10 +61,24 @@ export class SampleRunner{
         program.onFrame(ts);
     }
 
-    public static registerSample(target:any,name:string){
-        SampleRunner.samples[name] = target;
+    public static registerSample(target:any,name){
+        SampleRunner.s_samples[name] = target;
         if(SampleRunner.s_startSample == null){
             SampleRunner.s_startSample = name;
         }
     }
+
+    public static Setup(){
+        if(SampleRunner.s_setup) return;
+        const entries = SAMPLES_ENTRY;
+        for (const name in entries) {
+            if (entries.hasOwnProperty(name)) {
+                const entry = entries[name];
+                SampleRunner.registerSample(entry,name);
+            }
+        }
+        SampleRunner.s_setup = true;
+
+    }
+    
 }
