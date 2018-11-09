@@ -31,6 +31,12 @@ export class SampleRunner{
         this.m_canvas = canvas;
         const grender = new GraphicsRender(canvas);
         this.m_graphicsRender = grender;
+        
+        Input.init(canvas);
+
+        GLUtility.setTargetFPS(60);
+        GLUtility.registerOnFrame(this.onFrame.bind(this));
+        WindowUtility.setOnResizeFunc(this.onResize.bind(this));
 
         let sname= SampleRunner.s_startSample;
         this.LoadSample(sname);
@@ -84,11 +90,7 @@ export class SampleRunner{
 
         this.m_curprogram = program;
 
-        GLUtility.setTargetFPS(60);
-        GLUtility.registerOnFrame(this.onFrame.bind(this));
-
         this.onResize();
-        WindowUtility.setOnResizeFunc(this.onResize.bind(this));
 
         return true;
     }

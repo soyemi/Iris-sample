@@ -28,7 +28,6 @@ export class PathTracer implements IProgram {
         camera.transform.parent = scene.transform;
 
         this.m_scene = scene;
-
         console.log(this.pipeline);
 
     }
