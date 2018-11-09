@@ -9,7 +9,6 @@ export interface IProgram{
     onRelease();
 }
 
-
 export class SampleRunner{
     private static s_samples:{[name:string]:any} = {};
     private static s_setup:boolean = false;
@@ -25,41 +24,44 @@ export class SampleRunner{
     }
 
     public constructor(canvas:HTMLCanvasElement){
-
         this.m_timer = new FrameTimer(false);
-
         this.m_canvas = canvas;
         const grender = new GraphicsRender(canvas);
         this.m_graphicsRender = grender;
-        
         Input.init(canvas);
-
         GLUtility.setTargetFPS(60);
         GLUtility.registerOnFrame(this.onFrame.bind(this));
         WindowUtility.setOnResizeFunc(this.onResize.bind(this));
+    }
 
-        let sname= SampleRunner.s_startSample;
-        this.LoadSample(sname);
+    public async LoadInitSample(){
+        let sname = SampleRunner.s_startSample;
+        await this.LoadSample(sname);
+        await this.LoadSample(sname);
     }
 
     private onResize(){
         const canvas = this.m_canvas;
         const grender = this.m_graphicsRender;
-        grender.resizeCanvas(canvas.clientWidth,canvas.clientHeight);
+
+        let width = canvas.clientWidth;
+        let height = canvas.clientHeight;
+        console.log('resize',width,height);
+        grender.resizeCanvas(width,height);
     }
 
     public onFrame(ts:number){
         let delta = this.m_timer.tick(ts);
-
         let dt = delta/ 1000;
-        Input.onFrame(dt);
 
         let program =this.m_curprogram;
+        if(program == null) return;
+        Input.onFrame(dt);
         program.onFrame(dt);
     }
 
     public static registerSample(target:any,name){
-        SampleRunner.s_samples[name] = target;
+        SampleRunner.s_samples[name] = target.prototype;
         if(SampleRunner.s_startSample == null){
             SampleRunner.s_startSample = name;
         }
@@ -79,11 +81,20 @@ export class SampleRunner{
     }
 
     public async LoadSample(sname:string):Promise<boolean>{
+
         let sproto = SampleRunner.s_samples[sname];
         if(sproto == null) return false;
 
+        let curprogram = this.m_curprogram;
+        if(curprogram !=null){
+            if(Object.getPrototypeOf(curprogram) == sproto){
+                return false;
+            }
+            curprogram.onRelease();
+        }
+
         const grender= this.m_graphicsRender;
-        let program = <IProgram>Object.create(sproto.prototype);
+        let program = <IProgram>Object.create(sproto);
         await program.onInit();
         await program.onSetupRender(grender);
         await program.onSetupScene();

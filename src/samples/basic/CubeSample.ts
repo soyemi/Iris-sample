@@ -9,6 +9,8 @@ export class CubeSample implements IProgram{
     private m_scene:Scene;
     private m_scenemgr:SceneManager;
 
+    private m_render:MeshRender;
+
     public onSetupRender(grender:GraphicsRender){
         this.grender = grender;
         grender.setPipeline(new PipelineForwardZPrepass());
@@ -34,7 +36,9 @@ export class CubeSample implements IProgram{
         let cube = new GameObject('cube');
         let mat = new Material(grender.shaderLib.shaderUnlitColor);
         mat.setColor(ShaderFX.UNIFORM_MAIN_COLOR,glmath.vec4(1,0,1,1));
-        cube.render = new MeshRender(Mesh.Cube,mat);
+        let render = new MeshRender(Mesh.Cube,mat);
+        this.m_render = render;
+        cube.render = render;
         cube.transform.setPosition(glmath.vec3(0,0,-5));
         cube.addComponent(<Component>{
             onUpdate:function(scene:Scene){
@@ -65,6 +69,14 @@ export class CubeSample implements IProgram{
     }
 
     public onRelease(){
-
+        const grender = this.grender;
+        const glctx = grender.glctx;
+        if(this.m_render != null){
+            this.m_render.release(glctx);
+            this.m_render = null;
+        }
+        this.m_scene = null;
+        this.m_scenemgr = null;
+        this.grender = null;
     }
 }

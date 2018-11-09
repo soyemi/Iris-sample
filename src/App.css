@@ -45,5 +45,7 @@
 
 .AppCanvas{
   background-color: beige;
+  height: 100%;
+  width: auto;
   flex: 1;
 }

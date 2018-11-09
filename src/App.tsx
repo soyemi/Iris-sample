@@ -26,7 +26,6 @@ class App extends React.Component {
           <SampleMenu sampleEnter={data} />
         </div>
         <canvas ref={this.canvas} className="AppCanvas"></canvas>
-
       </div>
     );
   }
@@ -35,13 +34,18 @@ class App extends React.Component {
     if (App.sampleRunner == null) {
       let domcanvas = this.canvas.current;
       if (domcanvas != null) {
-        App.sampleRunner = new SampleRunner(domcanvas);
+        let samplerunner = new SampleRunner(domcanvas);
+        App.sampleRunner = samplerunner;
+        samplerunner.LoadInitSample();
       }
     }
 
   }
-  
-  public componentWillUnmount() {
+
+  public componentDidUpdate(){
+    console.log('update');
   }
+
 }
 export default App;
+
