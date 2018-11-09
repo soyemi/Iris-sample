@@ -6,6 +6,7 @@ export interface SampleMenuProp {
         key: string,
         path: string
     }[];
+    onMenuItemClick:(string)=>void;
 }
 
 export interface SampleMenuState {
@@ -22,9 +23,16 @@ SampleMenuState > {
         return (
             <div className="sample-menu">
                 {this.props.sampleEnter.map((item,i)=>(
-                    <a key={i} className="menu-item">{item.key}</a>
+                    <a onClick={this.onItemClick} key={item.key} className="menu-item">{item.key}</a>
                 ))}
             </div>
         )
+    }
+
+    public onItemClick = (e)=>{
+        let sname = (e.target as HTMLElement).innerText;
+        if(sname != null){
+            this.props.onMenuItemClick(sname);
+        }
     }
 }

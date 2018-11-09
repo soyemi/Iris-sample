@@ -23,11 +23,19 @@ class App extends React.Component {
       <div className="App">
         <div className="AppMenu">
           <h2 className="AppTitle">Iris-samples</h2>
-          <SampleMenu sampleEnter={data} />
+          <SampleMenu sampleEnter={data} onMenuItemClick={this.onSampleClick} />
         </div>
         <canvas ref={this.canvas} className="AppCanvas"></canvas>
       </div>
     );
+  }
+
+  public onSampleClick = (sname:string)=>{
+    App.sampleRunner.LoadSample(sname).then((suc)=>{
+      if(suc){
+        history.pushState(null,`Iris-sample | ${sname}`,`${sname}`);
+      }
+    })
   }
 
   public componentDidMount() {
@@ -36,15 +44,14 @@ class App extends React.Component {
       if (domcanvas != null) {
         let samplerunner = new SampleRunner(domcanvas);
         App.sampleRunner = samplerunner;
-        samplerunner.LoadInitSample();
+
+        let pathname= window.location.pathname.substr(1);
+        samplerunner.LoadInitSample(pathname);
       }
     }
 
   }
 
-  public componentDidUpdate(){
-    console.log('update');
-  }
 
 }
 export default App;

@@ -34,9 +34,8 @@ export class SampleRunner{
         WindowUtility.setOnResizeFunc(this.onResize.bind(this));
     }
 
-    public async LoadInitSample(){
-        let sname = SampleRunner.s_startSample;
-        await this.LoadSample(sname);
+    public async LoadInitSample(sname?:string){
+        if(sname == null || SampleRunner.s_samples[sname] == null) sname = SampleRunner.s_startSample;
         await this.LoadSample(sname);
     }
 
@@ -46,7 +45,6 @@ export class SampleRunner{
 
         let width = canvas.clientWidth;
         let height = canvas.clientHeight;
-        console.log('resize',width,height);
         grender.resizeCanvas(width,height);
     }
 
@@ -91,6 +89,7 @@ export class SampleRunner{
                 return false;
             }
             curprogram.onRelease();
+            this.m_curprogram = null;
         }
 
         const grender= this.m_graphicsRender;
