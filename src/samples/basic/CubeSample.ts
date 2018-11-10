@@ -1,5 +1,5 @@
 import { IProgram } from '../SampleProgram';
-import { GraphicsRender, PipelineForwardZPrepass,Component, Scene, Camera, glmath, GameObject, Mesh, Material, ShaderFX, SceneManager, CameraFreeFly, Input, quat } from 'iris-gl';
+import { GraphicsRender,PipelineForwardZPrePass,Component, Scene, Camera, glmath, GameObject, Mesh, Material, ShaderFX, SceneManager, CameraFreeFly, Input, quat, Light, ClearType, vec4 } from 'iris-gl';
 import { MeshRender } from 'iris-gl/dist/MeshRender';
 
 export class CubeSample implements IProgram{
@@ -13,7 +13,7 @@ export class CubeSample implements IProgram{
 
     public onSetupRender(grender:GraphicsRender){
         this.grender = grender;
-        grender.setPipeline(new PipelineForwardZPrepass());
+        grender.setPipeline(new PipelineForwardZPrePass());
     }
 
     public onInit(){
@@ -21,7 +21,6 @@ export class CubeSample implements IProgram{
     }
 
     public onSetupScene(){
-
         const grender = this.grender;
 
         let scene = new Scene();
@@ -31,15 +30,17 @@ export class CubeSample implements IProgram{
         camera.transform.setPosition(glmath.vec3(0,1, 0));
         camera.transform.setLocalDirty();
         camera.transform.parent = scene.transform;
+        camera.clearType = ClearType.Background;
+        camera.background = vec4.zero;
         camera.gameobject.addComponent(new CameraFreeFly());
 
         let cube = new GameObject('cube');
-        let mat = new Material(grender.shaderLib.shaderUnlitColor);
-        mat.setColor(ShaderFX.UNIFORM_MAIN_COLOR,glmath.vec4(1,0,1,1));
+        let mat = new Material(grender.shaderLib.shaderDiffuse);
+        mat.setColor(ShaderFX.UNIFORM_MAIN_COLOR,glmath.vec4(1,1,1,1));
         let render = new MeshRender(Mesh.Cube,mat);
         this.m_render = render;
         cube.render = render;
-        cube.transform.setPosition(glmath.vec3(0,0,-5));
+        cube.transform.setPosition(glmath.vec3(0,0,-7));
         cube.addComponent(<Component>{
             onUpdate:function(scene:Scene){
                 let dt = Input.snapshot.deltaTime;
@@ -49,8 +50,11 @@ export class CubeSample implements IProgram{
                 trs.applyRotate(rota);
             }
         })
-
         cube.transform.parent = scene.transform;
+
+        let lobj = new GameObject('loght')
+        let light = Light.creatDirctionLight(lobj,1.0,glmath.vec3(0,-1,0.1));
+        light.gameobject.transform.parent = scene.transform;
     }
 
     public onFrame(ts:number){

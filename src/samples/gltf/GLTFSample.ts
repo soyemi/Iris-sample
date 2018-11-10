@@ -1,17 +1,17 @@
 import { IProgram } from '../SampleProgram';
-import { GraphicsRender, PipelineForwardZPrepass, Scene,glmath, SceneManager, Camera, CameraFreeFly, GLTFtool, GLTFSceneBuilder, Utility, ClearType, GameObject, Light, vec3, quat } from 'iris-gl';
+import { GraphicsRender, PipelineForwardZPrePass, Scene,glmath, SceneManager, Camera, CameraFreeFly, GLTFtool, GLTFSceneBuilder, Utility, ClearType, GameObject, Light, vec3, quat } from 'iris-gl';
 
 const scene_glb = require('./res/scene.glb');
 
 export class GLTFSample implements IProgram {
     private grender : GraphicsRender;
-    private pipeline : PipelineForwardZPrepass;
+    private pipeline : PipelineForwardZPrePass;
     private m_scene : Scene;
     private m_sceneMgr : SceneManager;
 
     onSetupRender(grender : GraphicsRender) {
         this.grender = grender;
-        let pipeline = new PipelineForwardZPrepass();
+        let pipeline = new PipelineForwardZPrePass();
         grender.setPipeline(pipeline);
         this.pipeline = pipeline;
     }

@@ -9,6 +9,7 @@ class App extends React.Component {
   public constructor(prop) {
     super(prop);
     this.canvas = React.createRef();
+    document.title = "Iris samples"
   }
 
   public render() {
