@@ -1,0 +1,40 @@
+
+
+.wgtRow{
+    line-height: 32px;
+    margin-bottom: 5px;
+    height: 100%;
+}
+
+.wgtLbl{
+    text-align: right;
+    line-height: 32px;
+    padding-right: 10px;
+    height: 100%;
+}
+
+.wgtCnt{
+    text-align: left;
+    line-height: 32px;
+    height: 32px;
+}
+
+.wgtInputNum{
+    width: 100%;
+}
+
+
+.wgtCol{
+    width: 20px;
+    height: 20px;
+    border-radius: 2px;
+    background-color: #331155;
+    display: inline-block;
+    margin: 6px;
+    border: 1px solid rgb(217,217,217);
+}
+
+
+.wgtPop :first-child{
+    padding: 0px !important;
+}
