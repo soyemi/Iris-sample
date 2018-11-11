@@ -4,7 +4,7 @@ import { GLTFSample } from './gltf/GLTFSample';
 
 
 export const SAMPLES_ENTRY = {
+    "gltf-assets":GLTFSample,
     "cube":CubeSample,
-    "gltf-rendering":GLTFSample,
     "path-tracer":PathTracer
 }
