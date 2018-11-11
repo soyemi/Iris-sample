@@ -37,7 +37,7 @@ export class PathTracerPipeline extends PipelineBase{
     private m_stateTracer:ShaderTags;
 
     private m_frame:number = 0;
-    private m_maxFrame:number = 100;
+    private m_maxFrame:number = 10;
 
     public constructor(csgcontainer:CSGContainer){
         super();
@@ -201,7 +201,6 @@ export class PathTracerPipeline extends PipelineBase{
             gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,onfront? this.m_fbFront : this.m_fbBack);
             this.drawMeshRender(this.m_meshrender);
             gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,null);
-            
             this.m_onfront = ! this.m_onfront;
             this.m_frame ++;
         }
@@ -211,7 +210,6 @@ export class PathTracerPipeline extends PipelineBase{
 
         if(drawRaster){
             statecache.apply(this.m_stateRaster);
-
             this.m_passOpaque.render(scene);
         }
         else{

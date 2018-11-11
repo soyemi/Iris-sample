@@ -43,21 +43,19 @@ void fragment(){
     uint id = 0U;
     const uint MAX_COUNT = 4U;
     float random = rand(wpos.xy);
-    vec3 colmask = vec3(1.0);
 
     for(uint i=0U;i< MAX_COUNT;i++){
 
         if(intersectWorld(r,intersect,id)){
-            colmask *= intersect.color;
-            col = colmask;
+            col = intersect.color;
 
-            //r.dir =  reflect(r.dir,intersect.normal);
-            r.dir =  normalize(hemiSphereSampling(dir,random +TIME.z + float(i),intersect.normal));
+            r.dir =  reflect(r.dir,intersect.normal);
+            //r.dir =  normalize(hemiSphereSampling(dir,random +TIME.z + float(i),intersect.normal));
             r.ori = intersect.point + r.dir *0.001;
         }
     }
     vec3 accuCol = texture(uSampler,vUV).xyz;
-    fragColor = vec4(mix(col/float(MAX_COUNT),accuCol,iterp),1.0);
+    fragColor = vec4(col,1.0); // vec4(mix(col/float(MAX_COUNT),accuCol,iterp),1.0);
 }
 
 bool intersectWorld(RAY r,out INTERSECT intersect,out uint id){
@@ -67,9 +65,11 @@ bool intersectWorld(RAY r,out INTERSECT intersect,out uint id){
     float t_max = 10000.;
     float t;
 
-    for(uint i=uint(0);i<uint(10);i++){
+    uint maxg = clamp(gcount,0U,10U);
+
+    for(uint i=0U;i<maxg;i++){
         CSG geom = csg[i];
-        if(geom.type == uint(0)){
+        if(geom.type == 0U){
             t = intersectSphere(r,geom,normal,hitpos);
             if(t > .0 && t < t_max){
                 t_max = t;

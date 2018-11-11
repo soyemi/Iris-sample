@@ -100,7 +100,7 @@ export class PathTracer implements IProgram {
             let csg = CSGObj.createSphere(sph1, glmath.vec3(0, 0, -6), 2.0);
             container.addObj(csg);
             sph1.render.material = matColor.clone();
-            csg.setColor(glmath.vec4(0.5,0.5,0.5,1.0));
+            csg.setColor(glmath.vec4(0,0,1,1.0));
         }
         container.setDirty();
     }
@@ -119,23 +119,38 @@ export class CSGBufferData extends ShaderData {
 
     public static BUFFER_NAME: string = 'CSG_DATA';
 
+    // 0 vec4 pos[,radius]
+    // 16 vec4 normal
+    // 32 vec4 color
+    // 48 uint type
+    // 64 vec4 matparam
+    // 80
+
     public constructor() {
-        const len = 4* 5 *4;
-        super(len * 10 +4);
+        const len = 80;
+        super(len * 10 + 4 + 4);
     }
 
     public setData(csg:CSGObj,index:number){
-        let offset  = index *20;
+        let offset  = index *80;
         let gobj = csg.gobj;
         let trs = gobj.transform;
 
         let buffer = this.buffer;
+
+        //position
         buffer.setVec3(offset,trs.position);
         if(csg.type == CSGType.Sphere){
+            //radius for sphere
             buffer.setFloat(offset+12,csg.sphereRadius);
         }
-        buffer.setVec3(offset+16,trs.position);
+        else{
+            //normal for plane
+            buffer.setVec3(offset+16,trs.forward);
+        }
+        //color
         buffer.setVec4(offset + 32,csg.color);
+        //type
         buffer.setUint32(offset + 48,csg.type);
 
     }
@@ -143,14 +158,11 @@ export class CSGBufferData extends ShaderData {
 
     public setIter(iter:number){
         let iterp = iter/(1.0 + iter);
-        this.buffer.setFloat(416,iterp);
+        this.buffer.setFloat(800,iterp);
     }
-
-    public setSphCount(count: number) {
-        this.buffer.setUint32(420, count);
-    }
-    public setPlaneCount(count: number) {
-        this.buffer.setUint32(424, count);
+    
+    public setGeomCount(count:number){
+        this.buffer.setUint32(804,count);
     }
 
 }
@@ -193,6 +205,7 @@ export class CSGContainer {
                 data.setData(csgobjs[i],i);
             }
             this.m_isdirty = false;
+            data.setGeomCount(csgobjs.length);
         }
         data.submitBuffer(gl,buffer);
     }

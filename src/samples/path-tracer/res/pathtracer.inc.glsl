@@ -1,11 +1,12 @@
 #ifdef SHADER_PS
 
+// 16 + 16 + 16 + 16 + 16
 struct CSG{
     vec4 pos;
     vec4 normal;
     vec4 color;
     uint type;
-    vec4 matparam;
+    vec4 matparam; //[emmitance,reflective,refractive,IOR]
 };
 
 
@@ -13,6 +14,7 @@ struct CSG{
 layout(std140) uniform CSG_DATA{
     CSG csg[10];
     float iterp;
+    uint gcount;
 };
 
 struct RAY{
