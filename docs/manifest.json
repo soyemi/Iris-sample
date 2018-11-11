@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Iris samples",
+  "name": "Samples for Iris rendering library",
   "icons": [
     {
       "src": "favicon.ico",
