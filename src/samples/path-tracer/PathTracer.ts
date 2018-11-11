@@ -38,6 +38,7 @@ export class PathTracer implements IProgram {
         let camera = Camera.persepctive(null, 60, 1.0, 0.1, 100.0);
         camera.gameobject.addComponent(new CameraFreeFly());
         camera.transform.parent = scene.transform;
+        camera.transform.setPosition(glmath.vec3(4,0,5));
 
         this.m_scene = scene;
         let matColor = new Material(this.grender.shaderLib.shaderUnlitColor);
@@ -75,7 +76,6 @@ export class PathTracer implements IProgram {
             planeRight.render.material = matColor.clone();
             planeRightCSG.setColor(glmath.vec4(1,0,0,1));
         }
-
         {
             let planeForward = new GameObject('planeForward');
             planeForward.transform.parent = scene.transform;
@@ -95,13 +95,49 @@ export class PathTracer implements IProgram {
         }
 
         {
-            let sph1 = new GameObject('sph1');
-            sph1.transform.parent = scene.transform;
-            let csg = CSGObj.createSphere(sph1, glmath.vec3(0, 0, -6), 2.0);
+            //light source
+            let sphLight = new GameObject('sphLight');
+            sphLight.transform.parent = scene.transform;
+            let csg = CSGObj.createSphere(sphLight, glmath.vec3(0, 9,-6), 5);
             container.addObj(csg);
-            sph1.render.material = matColor.clone();
-            csg.setColor(glmath.vec4(0,0,1,1.0));
+            sphLight.render.material = matColor.clone();
+            csg.setColor(glmath.vec4(1,1,1,1.0));
+            csg.setMatParam(10.0,0,0,1);
         }
+
+
+        {
+            //Diffuse
+            let sphDiffuse = new GameObject('sphDiffuse');
+            sphDiffuse.transform.parent = scene.transform;
+            let csg = CSGObj.createSphere(sphDiffuse, glmath.vec3(0, 0, -7), 1.0);
+            container.addObj(csg);
+            sphDiffuse.render.material = matColor.clone();
+            csg.setColor(glmath.vec4(1,1,1,1.0));
+        }
+
+        {
+            //Reflative
+            let sphReflective = new GameObject('sphReflective');
+            sphReflective.transform.parent = scene.transform;
+            let csg = CSGObj.createSphere(sphReflective, glmath.vec3(-3, -3, -7), 1.5);
+            container.addObj(csg);
+            sphReflective.render.material = matColor.clone();
+            csg.setColor(glmath.vec4(1,1,1,1.0));
+            csg.setMatParam(0,1.0,0,1);
+        }
+
+        {
+            //Refractive
+            let sphRefractive = new GameObject('Refractive');
+            sphRefractive.transform.parent = scene.transform;
+            let csg = CSGObj.createSphere(sphRefractive, glmath.vec3(3, -2, -6), 2);
+            container.addObj(csg);
+            sphRefractive.render.material = matColor.clone();
+            csg.setColor(glmath.vec4(1,1,1,1.0));
+            csg.setMatParam(0,0,1.0,5.0);
+        }
+
         container.setDirty();
     }
     onFrame(ts: number) {
@@ -152,6 +188,8 @@ export class CSGBufferData extends ShaderData {
         buffer.setVec4(offset + 32,csg.color);
         //type
         buffer.setUint32(offset + 48,csg.type);
+        //mat
+        buffer.setVec4(offset +64,csg.matParam);
 
     }
 
@@ -218,6 +256,7 @@ export class CSGObj {
     public gobj: GameObject;
 
     public color: vec4 = Utility.randomColor();
+    public matParam:vec4 = glmath.vec4(0,0,0,1);
 
     public sphereRadius: number = 1.0;
     private constructor() {
@@ -226,6 +265,14 @@ export class CSGObj {
     public setColor(col:vec4){
         this.color = col;
         this.gobj.render.material.setColor(ShaderFX.UNIFORM_MAIN_COLOR,col);
+    }
+
+    public setMatParam(emmitance:number =0.0,reflective:number = 0.0,refractive:number = 0.0,IOR:number= 1.0){
+        let matp = this.matParam;
+        matp.x = emmitance;
+        matp.y = reflective;
+        matp.z = refractive;
+        matp.w = IOR;
     }
 
 

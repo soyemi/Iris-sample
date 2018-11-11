@@ -9,6 +9,12 @@ struct CSG{
     vec4 matparam; //[emmitance,reflective,refractive,IOR]
 };
 
+struct INTERSECT{
+    vec3 point;
+    vec3 normal;
+    float IOR;
+};
+
 
 
 layout(std140) uniform CSG_DATA{
@@ -20,6 +26,7 @@ layout(std140) uniform CSG_DATA{
 struct RAY{
     vec3 dir;
     vec3 ori;
+    float IOR;
 };
 
 float rand(vec2 co)
@@ -96,4 +103,28 @@ float intersectPlane(RAY r,in CSG geom,out vec3 normal,out vec3 hitpos){
     return t;
 }
 
+//refturn [reflectCoef,transmitCoef]
+vec2 calculateFresnel(vec3 normal,vec3 incident,float incidentIOR,float transmitIOR){
+    vec2 fresnel = vec2(0);
+    incident = normalize(incident);
+	normal = normalize(normal);
+
+    float cosThetaI = abs(dot(normal, incident));
+	float sinIncident = sqrt(1.0 - cosThetaI * cosThetaI);
+	float sinTransmit = incidentIOR / transmitIOR * sinIncident;
+	float cosThetaT = sqrt(1.0 - sinTransmit*sinTransmit);
+
+    if(cosThetaT <=0.0){
+        return vec2(1.0,0.0);
+    }
+    else{
+        //Wiki pedia https://en.wikipedia.org/wiki/Fresnel_equations
+		float Rs = (incidentIOR *cosThetaI - transmitIOR * cosThetaT) / (incidentIOR *cosThetaI + transmitIOR * cosThetaT);
+		Rs *= Rs;
+		float Rp = (incidentIOR* cosThetaT - transmitIOR * cosThetaI) / (incidentIOR* cosThetaT + transmitIOR * cosThetaI);
+		Rp *= Rp;
+		float reflectCoef = 0.5*(Rs + Rp);
+        return vec2(reflectCoef,1.0 - reflectCoef);
+    }
+}
 #endif

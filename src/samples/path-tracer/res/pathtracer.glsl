@@ -23,11 +23,9 @@ void vertex(){
 
 #pragma ps fragment
 #ifdef SHADER_PS
-struct INTERSECT{
-    vec3 point;
-    vec3 normal;
-    vec3 color;
-};
+
+
+uniform float seed; //Random seed [0.0,1.0]
 
 out vec4 fragColor;
 uniform sampler2D uSampler;
@@ -38,35 +36,23 @@ void fragment(){
     RAY r;
     r.dir = dir;
     r.ori = CAMERA_POS.xyz;
-    INTERSECT intersect;
+    r.IOR = 1.0;
     vec3 col = vec3(0);
-    uint id = 0U;
     const uint MAX_COUNT = 4U;
-    float random = rand(wpos.xy);
 
-    for(uint i=0U;i< MAX_COUNT;i++){
+    trace(r,MAX_COUNT,col);
 
-        if(intersectWorld(r,intersect,id)){
-            col = intersect.color;
-
-            r.dir =  reflect(r.dir,intersect.normal);
-            //r.dir =  normalize(hemiSphereSampling(dir,random +TIME.z + float(i),intersect.normal));
-            r.ori = intersect.point + r.dir *0.001;
-        }
-    }
     vec3 accuCol = texture(uSampler,vUV).xyz;
-    fragColor = vec4(col,1.0); // vec4(mix(col/float(MAX_COUNT),accuCol,iterp),1.0);
+    fragColor = vec4(mix(col/float(MAX_COUNT),accuCol,iterp),1.0);
 }
 
-bool intersectWorld(RAY r,out INTERSECT intersect,out uint id){
+
+bool intersectWorld(inout RAY r,out INTERSECT intersect,out uint id){
     vec3 normal;
     vec3 hitpos;
-
     float t_max = 10000.;
     float t;
-
     uint maxg = clamp(gcount,0U,10U);
-
     for(uint i=0U;i<maxg;i++){
         CSG geom = csg[i];
         if(geom.type == 0U){
@@ -75,7 +61,6 @@ bool intersectWorld(RAY r,out INTERSECT intersect,out uint id){
                 t_max = t;
                 intersect.point = hitpos;
                 intersect.normal = normal;
-                intersect.color = geom.color.xyz;
                 id = i;
             }
         }
@@ -85,14 +70,89 @@ bool intersectWorld(RAY r,out INTERSECT intersect,out uint id){
                 t_max = t;
                 intersect.point = hitpos;
                 intersect.normal = normal;
-                intersect.color = geom.color.xyz;
                 id = i;
             }
         }
     }
-
-   
     return t < 10000.;
 }
+
+void trace(in RAY r,uint RAY_DEPTH, inout vec3 col){
+    uint id = 0U;
+    vec3 colormask = vec3(1.0);
+    float random = seed;
+
+    INTERSECT intersect;
+    for(uint i=0U;i< RAY_DEPTH;i++){
+        if(intersectWorld(r,intersect,id)){
+            CSG g = csg[id];
+            vec4 gmat = g.matparam;
+            vec3 gcolor = g.color.xyz;
+            if(gmat.x >0.0){
+                //Light source
+                col = colormask * gcolor * gmat.x;
+                return;
+            }
+            else if(gmat.y<=0.0 && gmat.z <=0.0){
+                //Diffuse
+                colormask *= gcolor;
+                col = colormask;
+                r.dir =  normalize(hemiSphereSampling(r.dir,random,intersect.normal));
+                r.ori = intersect.point + r.dir *0.001;
+            }
+            else{
+                if(gmat.z >0.0){
+                    //Refract
+
+                    vec3 intersect_point = intersect.point;
+                    vec3 intersect_normal = intersect.normal;
+
+                    bool isInsideOut = dot(r.dir, intersect_normal) > 0.0;
+
+                    colormask *= gcolor;
+                    col = colormask;
+                    r.dir =  normalize(hemiSphereSampling(r.dir,random,intersect_normal));
+                    r.ori = intersect.point + r.dir *0.001;
+
+                    vec3 random3 = vec3(random,rand(intersect_point.xz), rand(intersect_point.yz));
+                    float oldIOR = r.IOR;
+                    float newIOR = gmat.w;
+
+                    float eta = oldIOR / newIOR;
+                    vec3 reflectR = reflect(r.dir,intersect_normal);
+                    vec3 refractR = refract(r.dir,intersect_normal,eta);
+
+                    vec2 fresnel = calculateFresnel(intersect_normal,r.dir,oldIOR,newIOR);
+                    float reflect_range = fresnel.x;
+
+                    if(random < reflect_range){
+                        //reflect
+                        r.dir = reflectR;
+                        r.ori = intersect.point + r.dir *0.001;
+                    }
+                    else{
+                        //transmit
+                        r.dir = refractR;
+                        r.ori = intersect.point + r.dir *0.001;
+                    }
+
+                    r.IOR = newIOR;
+                    colormask *= gcolor;
+                    col = colormask;
+                }
+                else{
+                    //Only Reflect
+                    colormask *= gcolor;
+                    col = colormask;
+                    r.IOR = 1.0;
+                    r.dir = reflect(r.dir,intersect.normal);
+                    r.ori = intersect.point + r.dir * 0.001;
+                }
+            }
+
+        }
+    }
+}
+
 
 #endif
