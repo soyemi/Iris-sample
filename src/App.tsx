@@ -1,7 +1,9 @@
 import * as React from 'react';
 import './App.css';
+import '../node_modules/react-wgtui/dist/index.css';
 import { SampleMenu } from './components/SampleMenu';
 import { SampleRunner } from './samples/SampleProgram';
+import { WgtButton} from 'react-wgtui';
 
 class App extends React.Component {
   private canvas: React.RefObject<HTMLCanvasElement>;
@@ -24,7 +26,9 @@ class App extends React.Component {
       <div className="App">
         <div className="AppMenu">
           <h2 className="AppTitle">Iris-samples</h2>
+          <WgtButton label="xxx"></WgtButton>
           <SampleMenu sampleEnter={data} onMenuItemClick={this.onSampleClick} />
+          
         </div>
         <canvas ref={this.canvas} className="AppCanvas"></canvas>
       </div>

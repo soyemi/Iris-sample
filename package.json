@@ -7,8 +7,7 @@
     "iris-gl": "^0.0.4",
     "react": "^16.6.0",
     "react-color": "^2.14.1",
-    "react-dom": "^16.6.0",
-    "wgtui": "file:../wgtui"
+    "react-dom": "^16.6.0"
   },
   "homepage": "https://yemi.me/Iris-sample/",
   "scripts": {
