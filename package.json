@@ -4,11 +4,11 @@
   "private": true,
   "dependencies": {
     "antd": "^3.10.4",
-    "iris-gl": "file:../iris",
+    "iris-gl": "^0.0.4",
     "react": "^16.6.0",
     "react-color": "^2.14.1",
     "react-dom": "^16.6.0",
-    "react-scripts-ts": "3.1.0"
+    "wgtui": "file:../wgtui"
   },
   "homepage": "https://yemi.me/Iris-sample/",
   "scripts": {
@@ -23,6 +23,8 @@
     "@types/node": "^10.12.2",
     "@types/react": "^16.4.18",
     "@types/react-dom": "^16.0.9",
+    "@types/webgl2": "^0.0.4",
+    "react-scripts-ts": "3.1.0",
     "typescript": "^3.1.6"
   }
 }

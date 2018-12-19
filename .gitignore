@@ -22,6 +22,6 @@ yarn-error.log*
 /.rpt2_cache/
 
 /docs/**/**.map
-/build
 
 package-lock.json
+/yarn.lock

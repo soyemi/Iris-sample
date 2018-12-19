@@ -1,7 +1,6 @@
 import { IProgram } from './SampleProgram';
 import { GraphicsRender, IRenderPipeline, SceneManager, Scene } from 'iris-gl';
 
-
 export abstract class DefaultProgram<T extends IRenderPipeline> implements IProgram{
     protected grender:GraphicsRender;
     protected m_sceneMgr:SceneManager;
