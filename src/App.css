@@ -56,6 +56,13 @@
   top: 0px;
   left: 0px;
   background-color: rgb(30,30,30);
+  transition: opacity ease-in-out 1.0s;
+}
+
+.AppLoading .wgtloader{
+  width: 100%;
+  position: absolute;
+  top: 50%;
 }
 
 .AppCanvas{

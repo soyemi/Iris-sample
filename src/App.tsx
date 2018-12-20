@@ -3,6 +3,7 @@ import './App.css';
 import '../node_modules/react-wgtui/dist/index.css';
 import { SampleRunner } from './samples/SampleProgram';
 import { WgtPanel, WgtListView, WgtLoader } from 'react-wgtui';
+import { WaitForTimes } from './samples/SampleResPack';
 
 interface SampleData {
   key: string;
@@ -15,12 +16,15 @@ interface AppStates {
 
 class App extends React.Component<{}, AppStates>{
   private canvas: React.RefObject<HTMLCanvasElement>;
+  private divLoading:React.RefObject<HTMLDivElement>;
   private static sampleRunner: SampleRunner;
   private samples: SampleData[] = [];
   public constructor(prop) {
     super(prop);
 
     this.canvas = React.createRef();
+    this.divLoading = React.createRef();
+
     this.state = {
       onload: true
     };
@@ -38,21 +42,35 @@ class App extends React.Component<{}, AppStates>{
     return this.rendermain();
   }
 
-  private setLoadingView(show: boolean) {
-    console.log("loading: " + show);
+  private async setLoadingView(show: boolean):Promise<void>{
+    if(show == this.state.onload) return;
+
+    let divloading = this.divLoading.current;
+    if(show){
+      divloading.style.display = "block";
+      await WaitForTimes(100);
+      divloading.style.opacity = '1.0';
+      await WaitForTimes(1500);
+    }
+    else{
+      divloading.style.opacity = '0';
+      await WaitForTimes(1000);
+      divloading.style.display = "none";
+    }
     this.setState({
       onload: show
     });
+
   }
 
-  private onListItemSel = (index: number) => {
+  private onListItemSel = async (index: number) => {
     const selSample = this.samples[index];
     let sname = selSample.key;
 
     const sampleRunner = App.sampleRunner;
     if (sampleRunner.cursname === sname) return;
 
-    this.setLoadingView(true);
+    await this.setLoadingView(true);
     this.loadSample(sname);
   }
 
@@ -70,7 +88,6 @@ class App extends React.Component<{}, AppStates>{
 
   private rendermain() {
     const data = this.samples;
-    const onload = this.state.onload;
     return (
       <div className="App">
         <div className="AppMenu">
@@ -87,9 +104,9 @@ class App extends React.Component<{}, AppStates>{
         </div>
         <div className="AppMain">
           <canvas ref={this.canvas} className="AppCanvas"></canvas>
-          {onload ? (<div className="AppLoading">
+          <div ref={this.divLoading} className="AppLoading">
             <WgtLoader />
-          </div>) : null}
+          </div>
         </div>
       </div>
     );
