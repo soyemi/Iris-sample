@@ -24,6 +24,10 @@ export class PathTracer implements IProgram {
         this.pipeline = pipeline;
     }
 
+    onLoadRes(){
+        return null;
+    }
+
     onInit() {
         this.m_sceneMgr = new SceneManager();
     }

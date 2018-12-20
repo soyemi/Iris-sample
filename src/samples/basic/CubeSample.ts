@@ -16,6 +16,8 @@ export class CubeSample implements IProgram{
         grender.setPipeline(new PipelineForwardZPrePass());
     }
 
+    public onLoadRes(){return null;}
+
     public onInit(){
         this.m_scenemgr = new SceneManager();
     }

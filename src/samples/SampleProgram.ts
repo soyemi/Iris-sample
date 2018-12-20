@@ -1,13 +1,17 @@
 import { GraphicsRender,GLUtility, FrameTimer, Input, WindowUtility} from 'iris-gl';
 import { SAMPLES_ENTRY } from './SamplesEntry';
+import { SampleResPack } from './SampleResPack';
 
 export interface IProgram{
+    onLoadRes():SampleResPack;
     onInit();
     onSetupRender(grender:GraphicsRender);
     onSetupScene();
     onFrame(ts:number);
     onRelease();
 }
+
+
 
 export class SampleRunner{
     private static s_samples:{[name:string]:any} = {};
@@ -18,6 +22,10 @@ export class SampleRunner{
     private m_graphicsRender:GraphicsRender;
     private m_curprogram:IProgram;
     private m_timer:FrameTimer;
+
+    private m_cursname:string;
+
+    public get cursname():string {return this.m_cursname;}
 
     public static get Samples():{[name:string]:any}{
         return SampleRunner.s_samples;
@@ -78,6 +86,7 @@ export class SampleRunner{
 
     }
 
+
     public async LoadSample(sname:string):Promise<boolean>{
 
         let sproto = SampleRunner.s_samples[sname];
@@ -94,6 +103,13 @@ export class SampleRunner{
 
         const grender= this.m_graphicsRender;
         let program = <IProgram>Object.create(sproto);
+
+        let res = program.onLoadRes();
+        if(res != null && !res.isLoaded){
+            let loaded = await res.load();
+            if(!loaded) return false;
+        }
+
         await program.onInit();
         await program.onSetupRender(grender);
         await program.onSetupScene();
@@ -101,6 +117,8 @@ export class SampleRunner{
         this.m_curprogram = program;
 
         this.onResize();
+
+        this.m_cursname = sname;
 
         return true;
     }
