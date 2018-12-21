@@ -1,6 +1,17 @@
 import { IProgram } from '../SampleProgram';
 import * as iris from 'iris-gl';
 import { PipelineForwardZPrePass, SceneManager } from 'iris-gl';
+import { ConfigObj, ConfigPanel } from 'src/ConfigPanel';
+
+
+export class SkyboxSampleCfgObj extends ConfigObj{
+
+    @ConfigPanel.FieldSelect("SkyboxType",["Procedural","360","Cubemap"])
+    public skyboxType:string;
+
+    public onConfigChange(key:string){
+    }
+}
 
 export class SkyboxSample implements IProgram{
 
@@ -22,7 +33,6 @@ export class SkyboxSample implements IProgram{
     public onInit(){
         this.m_scenemgr = new SceneManager();
     }
-
 
 
     public onSetupScene(){
