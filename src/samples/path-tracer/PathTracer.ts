@@ -5,15 +5,11 @@ import { Scene } from "iris-gl/dist/Scene";
 import { MeshRender } from "iris-gl/dist/MeshRender";
 
 export class PathTracer implements IProgram {
-
     private grender: GraphicsRender;
     private pipeline: PathTracerPipeline;
-
     private m_scene: Scene;
     private m_sceneMgr: SceneManager;
-
     private m_csgcontainer: CSGContainer;
-
     private static tracer:PathTracer;
     onSetupRender(grender: GraphicsRender) {
         PathTracer.tracer = this;
@@ -47,7 +43,6 @@ export class PathTracer implements IProgram {
         this.m_scene = scene;
         let matColor = new Material(this.grender.shaderLib.shaderUnlitColor);
         let container = this.m_csgcontainer;
-
         {
             let planeTop = new GameObject('planeTop');
             planeTop.transform.parent = scene.transform;
@@ -156,16 +151,13 @@ export class PathTracer implements IProgram {
 
 
 export class CSGBufferData extends ShaderData {
-
     public static BUFFER_NAME: string = 'CSG_DATA';
-
     // 0 vec4 pos[,radius]
     // 16 vec4 normal
     // 32 vec4 color
     // 48 uint type
     // 64 vec4 matparam
     // 80
-
     public constructor() {
         const len = 80;
         super(len * 10 + 4 + 4);
@@ -194,9 +186,7 @@ export class CSGBufferData extends ShaderData {
         buffer.setUint32(offset + 48,csg.type);
         //mat
         buffer.setVec4(offset +64,csg.matParam);
-
     }
-
 
     public setIter(iter:number){
         let iterp = iter/(1.0 + iter);
@@ -206,7 +196,6 @@ export class CSGBufferData extends ShaderData {
     public setGeomCount(count:number){
         this.buffer.setUint32(804,count);
     }
-
 }
 
 export enum CSGType {
@@ -216,11 +205,8 @@ export enum CSGType {
 
 export class CSGContainer {
     public csgobjs: CSGObj[] = [];
-
     private m_isdirty: boolean = true;
-
     private m_data: CSGBufferData;
-
     public get data(): CSGBufferData {
         return this.m_data;
     }
@@ -251,11 +237,9 @@ export class CSGContainer {
         }
         data.submitBuffer(gl,buffer);
     }
-
 }
 
 export class CSGObj {
-
     public type: CSGType = CSGType.Sphere;
     public gobj: GameObject;
 
@@ -279,18 +263,14 @@ export class CSGObj {
         matp.w = IOR;
     }
 
-
     public static createSphere(gameobject: GameObject, pos: vec3, radius: number = 1.0): CSGObj {
         let csgobj = new CSGObj();
         csgobj.type = CSGType.Sphere;
         csgobj.gobj = gameobject;
         csgobj.sphereRadius = radius;
-
         gameobject.transform.localPosition = pos;
         gameobject.transform.localScale = vec3.one.mulNum(radius);
-
         gameobject.render = new MeshRender(Mesh.Sphere);
-
         return csgobj;
     }
 
@@ -298,13 +278,10 @@ export class CSGObj {
         let csgobj = new CSGObj();
         csgobj.gobj = gameobject;
         csgobj.type = CSGType.Plane;
-
         gameobject.transform.setPosition(pos);
         gameobject.transform.forward = nor;
         gameobject.transform.setScale(glmath.vec3(50, 50, 50));
-
         gameobject.render = new MeshRender(Mesh.Quad);
-
         return csgobj;
     }
 }

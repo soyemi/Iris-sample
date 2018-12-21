@@ -118,12 +118,12 @@ class App extends React.Component<{}, AppStates>{
       if (domcanvas != null) {
         let samplerunner = new SampleRunner(domcanvas);
         App.sampleRunner = samplerunner;
-
-        let pathname = window
-          .location
-          .pathname
-          .substr(1);
+        let pathname = window.location.pathname.substr(1);
         this.loadSample(pathname);
+        var self = this;
+        samplerunner.LoadInitSample(pathname).then(()=>{
+          self.setLoadingView(false);
+        });
       }
     }
   }
