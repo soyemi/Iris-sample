@@ -18,6 +18,8 @@ export class SkyboxSample implements IProgram{
     private grender:iris.GraphicsRender;
     private m_scene: iris.Scene;
     private m_scenemgr:iris.SceneManager;
+    private m_configObject:SkyboxSampleCfgObj;
+
     public onLoadRes(){
         return null;
     }
@@ -32,6 +34,11 @@ export class SkyboxSample implements IProgram{
 
     public onInit(){
         this.m_scenemgr = new SceneManager();
+        this.m_configObject = new SkyboxSampleCfgObj();
+    }
+
+    public onCfgObject():ConfigObj{
+        return this.m_configObject;
     }
 
 

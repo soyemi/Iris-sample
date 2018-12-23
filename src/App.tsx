@@ -4,6 +4,7 @@ import '../node_modules/react-wgtui/dist/index.css';
 import { SampleRunner } from './samples/SampleProgram';
 import { WgtPanel, WgtListView, WgtLoader } from 'react-wgtui';
 import { WaitForTimes } from './samples/SampleResPack';
+import { ConfigPanel, ConfigObj } from './ConfigPanel';
 
 interface SampleData {
   key: string;
@@ -19,17 +20,17 @@ class App extends React.Component<{}, AppStates>{
   private divLoading:React.RefObject<HTMLDivElement>;
   private static sampleRunner: SampleRunner;
   private samples: SampleData[] = [];
+  private cfgpnl: React.RefObject<ConfigPanel>;
+
   public constructor(prop) {
     super(prop);
-
     this.canvas = React.createRef();
     this.divLoading = React.createRef();
-
+    this.cfgpnl = React.createRef();
     this.state = {
       onload: true
     };
     document.title = "Iris samples";
-
     const samples = SampleRunner.Samples;
     for (const name in samples) {
       if (samples.hasOwnProperty(name)) {
@@ -44,7 +45,6 @@ class App extends React.Component<{}, AppStates>{
 
   private async setLoadingView(show: boolean):Promise<void>{
     if(show == this.state.onload) return;
-
     let divloading = this.divLoading.current;
     if(show){
       divloading.style.display = "block";
@@ -74,16 +74,18 @@ class App extends React.Component<{}, AppStates>{
     this.loadSample(sname);
   }
 
-  private loadSample(sname:string){
+  private async loadSample(sname:string){
     var self = this;
-    App.sampleRunner
-      .LoadSample(sname)
-      .then((suc) => {
-        if (suc) {
-          self.setLoadingView(false);
-          history.pushState(null, `Iris-sample | ${sname}`, `${sname}`);
-        }
-      })
+    let [suc,cfgobj] =await App.sampleRunner.LoadSample(sname);
+    if(suc){
+      self.setLoadingView(false);
+      this.onLoadSuccess(cfgobj);
+      history.pushState(null, `Iris-sample | ${sname}`, `${sname}`);
+    }
+  }
+
+  private async onLoadSuccess(cfgobj:ConfigObj){
+    this.cfgpnl.current.setConfigObject(cfgobj);
   }
 
   private rendermain() {
@@ -104,6 +106,9 @@ class App extends React.Component<{}, AppStates>{
         </div>
         <div className="AppMain">
           <canvas ref={this.canvas} className="AppCanvas"></canvas>
+          <div className="AppCfgPnl">
+            <ConfigPanel ref={this.cfgpnl}></ConfigPanel>
+          </div>
           <div ref={this.divLoading} className="AppLoading">
             <WgtLoader />
           </div>
@@ -120,10 +125,6 @@ class App extends React.Component<{}, AppStates>{
         App.sampleRunner = samplerunner;
         let pathname = window.location.pathname.substr(1);
         this.loadSample(pathname);
-        var self = this;
-        samplerunner.LoadInitSample(pathname).then(()=>{
-          self.setLoadingView(false);
-        });
       }
     }
   }

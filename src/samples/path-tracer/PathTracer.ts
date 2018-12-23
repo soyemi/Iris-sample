@@ -20,6 +20,8 @@ export class PathTracer implements IProgram {
         this.pipeline = pipeline;
     }
 
+    public onCfgObject(){return null;}
+
     onLoadRes(){
         return null;
     }

@@ -35,6 +35,8 @@ export class GLTFSample implements IProgram {
         this.pipeline = pipeline;
     }
 
+    public onCfgObject(){ return null;}
+
     public onLoadRes(){
         return  GLTFSample.s_respack;
     }

@@ -1,10 +1,12 @@
 import { GraphicsRender,GLUtility, FrameTimer, Input, WindowUtility} from 'iris-gl';
 import { SAMPLES_ENTRY } from './SamplesEntry';
 import { SampleResPack } from './SampleResPack';
+import { ConfigObj } from 'src/ConfigPanel';
 
 export interface IProgram{
     onLoadRes():SampleResPack;
     onInit();
+    onCfgObject();
     onSetupRender(grender:GraphicsRender);
     onSetupScene();
     onFrame(ts:number);
@@ -87,15 +89,15 @@ export class SampleRunner{
     }
 
 
-    public async LoadSample(sname:string):Promise<boolean>{
+    public async LoadSample(sname:string):Promise<[boolean,ConfigObj]>{
 
         let sproto = SampleRunner.s_samples[sname];
-        if(sproto == null) return false;
+        if(sproto == null) return [false,null];
 
         let curprogram = this.m_curprogram;
         if(curprogram !=null){
             if(Object.getPrototypeOf(curprogram) == sproto){
-                return false;
+                return [false,null];
             }
             curprogram.onRelease();
             this.m_curprogram = null;
@@ -107,8 +109,9 @@ export class SampleRunner{
         let res = program.onLoadRes();
         if(res != null && !res.isLoaded){
             let loaded = await res.load();
-            if(!loaded) return false;
+            if(!loaded) return [false,null];
         }
+
 
         await program.onInit();
         await program.onSetupRender(grender);
@@ -120,7 +123,7 @@ export class SampleRunner{
 
         this.m_cursname = sname;
 
-        return true;
+        return [true,program.onCfgObject()];
     }
 }
 

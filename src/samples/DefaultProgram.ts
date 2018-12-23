@@ -13,6 +13,8 @@ export abstract class DefaultProgram<T extends IRenderPipeline> implements IProg
 
     onLoadRes(){ return null;}
 
+    onCfgObject(){ return null;}
+
     onInit() {
         this.m_sceneMgr = new SceneManager();
         this.m_scene= new Scene();
