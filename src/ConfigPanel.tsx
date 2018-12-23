@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { WgtPanel, WgtFormContainer, WgtFormItem } from 'react-wgtui';
+import { WgtPanel, WgtFormContainer, WgtFormItem, WgtSelect } from 'react-wgtui';
 import "./ConfigPanel.less";
 
 export class ConfigObj{
@@ -16,12 +16,24 @@ export class ConfigObj{
         for (const key in fieldmap) {
             if (fieldmap.hasOwnProperty(key)) {
                 const field = fieldmap[key];
-                wgts.push(ConfigObj.getWidget(field.type,field.label));
+                wgts.push(ConfigObj.getWidget(field));
             }
         }
+
+        return wgts;
     }
 
-    private static getWidget(wgttype:ConfigFieldType,wgtkey:string){
+    private static getWidget(fieldset:ConfigFieldSetting){
+
+        const wgttype = fieldset.type;
+        const wgtkey = fieldset.label;
+
+        const opts = [];
+        fieldset.extra.forEach(element => {
+            opts.push({
+                value: element
+            });
+        });
 
         let field = null;
         switch(wgttype){
@@ -29,7 +41,7 @@ export class ConfigObj{
 
             break;
             case ConfigFieldType.Select:
-                
+                field = (<WgtSelect opts={opts}></WgtSelect>)
             break;
             case ConfigFieldType.Toggle:
 
@@ -37,7 +49,7 @@ export class ConfigObj{
         }
 
         return (
-            <WgtFormItem label={wgtkey}>
+            <WgtFormItem key={wgtkey} label={wgtkey}>
                 {
                     field
                 }
@@ -60,10 +72,10 @@ export class ConfigPanel extends React.Component<{},ConfigPanelStates>{
 
 
     public render(){
-        let fields:React.ReactNode[] = [];
+        let fields:React.ReactNode[] = null;
         const cfgobj = this.state.cfgobj;
         if(cfgobj != null){
-            ConfigObj.getWgtFields(cfgobj);
+            fields = ConfigObj.getWgtFields(cfgobj);
         }
         else{
             return null;
@@ -101,7 +113,8 @@ export class ConfigPanel extends React.Component<{},ConfigPanelStates>{
             if(target.fieldmap == null) target.fieldmap = {};
             target.fieldmap[key] = {
                 type:ConfigFieldType.Select,
-                label:label
+                label:label,
+                extra:options
             };
         }
     }
@@ -126,4 +139,5 @@ export enum ConfigFieldType{
 interface ConfigFieldSetting{
     type:ConfigFieldType;
     label:string;
+    extra?:any;
 }
