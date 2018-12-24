@@ -10,12 +10,10 @@ class GLTFSampleResPack extends SampleResPack{
     public constructor(){
         super();
     }
-
     protected async doLoad(): Promise<boolean> {
         this.glftdata = await GLTFtool.LoadGLTFBinary(scene_glb);
         return true;
     }
-    
 }
 
 export class GLTFSample implements IProgram {
@@ -23,10 +21,7 @@ export class GLTFSample implements IProgram {
     private pipeline : PipelineForwardZPrePass;
     private m_scene : Scene;
     private m_sceneMgr : SceneManager;
-
-
     public static s_respack: GLTFSampleResPack = new GLTFSampleResPack();
-
 
     onSetupRender(grender : GraphicsRender) {
         this.grender = grender;
@@ -90,5 +85,11 @@ export class GLTFSample implements IProgram {
         grender.render(scene,ts);
         grender.renderToCanvas();
     }
-    onRelease() {}
+    onRelease() {
+        this.pipeline.release();
+        this.pipeline = null;
+        this.grender.release();
+        this.grender = null;
+
+    }
 }
