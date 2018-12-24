@@ -4,7 +4,7 @@ import "./ConfigPanel.less";
 
 export class ConfigObj{
     fieldmap:{[label:string]:ConfigFieldSetting} ={};
-    public onConfigChange(key:string){};
+    public onConfigChange(key:string,newval:any){};
 
 
     public static getWgtFields(cfgobj: ConfigObj){
@@ -16,43 +16,35 @@ export class ConfigObj{
         for (const key in fieldmap) {
             if (fieldmap.hasOwnProperty(key)) {
                 const field = fieldmap[key];
-                wgts.push(ConfigObj.getWidget(field));
+                wgts.push(ConfigObj.getWidget(field,cfgobj));
             }
         }
 
         return wgts;
     }
 
-    private static getWidget(fieldset:ConfigFieldSetting){
-
+    private static getWidget(fieldset:ConfigFieldSetting,cfgobj:ConfigObj){
         const wgttype = fieldset.type;
         const wgtkey = fieldset.label;
-
-        const opts = [];
-        fieldset.extra.forEach(element => {
-            opts.push({
-                value: element
-            });
-        });
-
         let field = null;
         switch(wgttype){
             case ConfigFieldType.Float:
-
             break;
             case ConfigFieldType.Select:
-                field = (<WgtSelect opts={opts}></WgtSelect>)
+                const opts = [];
+                fieldset.extra.forEach(element => {
+                    opts.push({
+                        value: element
+                    });
+                });
+                field = (<WgtSelect opts={opts} onValueChange={(val)=>cfgobj.onConfigChange(wgtkey,val)}></WgtSelect>)
             break;
             case ConfigFieldType.Toggle:
-
             break;
         }
-
         return (
             <WgtFormItem key={wgtkey} label={wgtkey}>
-                {
-                    field
-                }
+                {field}
             </WgtFormItem>
         )
     }
