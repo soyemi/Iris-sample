@@ -14,7 +14,8 @@
     "build": "react-scripts-ts build",
     "build-doc": "react-scripts-ts build && bash copydocs.sh",
     "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject"
+    "eject": "react-scripts-ts eject",
+    "sync": "yarn link iris-gl react-wgtui"
   },
   "devDependencies": {
     "@types/jest": "^23.3.9",
