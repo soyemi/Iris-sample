@@ -73,6 +73,11 @@ export class SkyboxSample implements IProgram{
     }
 
     public onSetupRender(grender:iris.GraphicsRender){
+        this.m_scenemgr = new SceneManager();
+        let cfgobj = new SkyboxSampleCfgObj();
+        cfgobj.cursample = this;
+        this.m_configObject = cfgobj;
+
         this.grender = grender;
         grender.setPipeline(new PipelineForwardZPrePass());
 
@@ -80,14 +85,7 @@ export class SkyboxSample implements IProgram{
         gl.clearColor(0.5,0.5,0.5,1.0);
     }
 
-    public onInit(){
-        this.m_scenemgr = new SceneManager();
-        let cfgobj = new SkyboxSampleCfgObj();
-        cfgobj.cursample = this;
-        this.m_configObject = cfgobj;
-    }
-
-    public onCfgObject():ConfigObj{
+    public getCfgObject():ConfigObj{
         return this.m_configObject;
     }
 

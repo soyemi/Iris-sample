@@ -12,6 +12,7 @@ export class PathTracer implements IProgram {
     private m_csgcontainer: CSGContainer;
     private static tracer:PathTracer;
     onSetupRender(grender: GraphicsRender) {
+        this.m_sceneMgr = new SceneManager();
         PathTracer.tracer = this;
         this.grender = grender;
         this.m_csgcontainer = new CSGContainer();
@@ -20,14 +21,10 @@ export class PathTracer implements IProgram {
         this.pipeline = pipeline;
     }
 
-    public onCfgObject(){return null;}
+    public getCfgObject(){return null;}
 
     onLoadRes(){
         return null;
-    }
-
-    onInit() {
-        this.m_sceneMgr = new SceneManager();
     }
 
     @DebugEntry('test')

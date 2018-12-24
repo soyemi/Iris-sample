@@ -24,20 +24,17 @@ export class GLTFSample implements IProgram {
     public static s_respack: GLTFSampleResPack = new GLTFSampleResPack();
 
     onSetupRender(grender : GraphicsRender) {
+        this.m_sceneMgr = new SceneManager();
         this.grender = grender;
         let pipeline = new PipelineForwardZPrePass();
         grender.setPipeline(pipeline);
         this.pipeline = pipeline;
     }
 
-    public onCfgObject(){ return null;}
+    public getCfgObject(){ return null;}
 
     public onLoadRes(){
         return  GLTFSample.s_respack;
-    }
-
-    async onInit() {
-        this.m_sceneMgr = new SceneManager();
     }
 
     async onSetupScene() {

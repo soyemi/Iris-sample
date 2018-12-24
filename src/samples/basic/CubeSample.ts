@@ -12,17 +12,14 @@ export class CubeSample implements IProgram{
     private m_render:MeshRender;
 
     public onSetupRender(grender:GraphicsRender){
+        this.m_scenemgr = new SceneManager();
         this.grender = grender;
         grender.setPipeline(new PipelineForwardZPrePass());
     }
 
-    public onCfgObject(){ return null;}
+    public getCfgObject(){ return null;}
 
     public onLoadRes(){return null;}
-
-    public onInit(){
-        this.m_scenemgr = new SceneManager();
-    }
 
     public onSetupScene(){
         const grender = this.grender;

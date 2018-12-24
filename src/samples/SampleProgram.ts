@@ -5,15 +5,12 @@ import { ConfigObj } from 'src/ConfigPanel';
 
 export interface IProgram{
     onLoadRes():SampleResPack;
-    onInit();
-    onCfgObject();
+    getCfgObject();
     onSetupRender(grender:GraphicsRender);
     onSetupScene();
     onFrame(ts:number);
     onRelease();
 }
-
-
 
 export class SampleRunner{
     private static s_samples:{[name:string]:any} = {};
@@ -112,8 +109,6 @@ export class SampleRunner{
             if(!loaded) return [false,null];
         }
 
-
-        await program.onInit();
         await program.onSetupRender(grender);
         await program.onSetupScene();
 
@@ -123,7 +118,7 @@ export class SampleRunner{
 
         this.m_cursname = sname;
 
-        return [true,program.onCfgObject()];
+        return [true,program.getCfgObject()];
     }
 }
 
