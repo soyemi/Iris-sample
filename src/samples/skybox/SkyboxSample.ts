@@ -1,6 +1,6 @@
 import { IProgram } from '../SampleProgram';
 import * as iris from 'iris-gl';
-import { PipelineForwardZPrePass, SceneManager, Texture } from 'iris-gl';
+import { PipelineForwardZPrePass, SceneManager, Texture2D, TextureCubeMap } from 'iris-gl';
 import { ConfigObj, ConfigPanel } from 'src/ConfigPanel';
 import { SampleResPack } from '../SampleResPack';
 
@@ -60,8 +60,8 @@ export class SkyboxSample implements IProgram{
     private m_skybox360:iris.Skybox;
     private m_skyboxCubemap:iris.Skybox;
 
-    private m_tex360:Texture;
-    private m_texcubemap:Texture;
+    private m_tex360:Texture2D;
+    private m_texcubemap:TextureCubeMap;
 
     private m_camera:iris.Camera;
 
@@ -113,7 +113,7 @@ export class SkyboxSample implements IProgram{
         const res = SkyboxSample.s_respack;
 
         this.m_skyboxProcedural = iris.Skybox.createFromProcedural();
-        let teximg360 = iris.Texture.createTexture2DImage(res.img360,iris.TextureCreationDesc.DefaultRGB,this.grender.glctx);
+        let teximg360 = iris.Texture2D.createTexture2DImage(res.img360,iris.Texture2DCreationDesc.DefaultRGB,this.grender.glctx);
         this.m_tex360 = teximg360;
         this.m_skybox360 = iris.Skybox.createFromTex360(teximg360);
         let texcubemap = iris.TextureCubeMap.loadCubeMapImage(res.imgCubemap,this.grender.glctx);

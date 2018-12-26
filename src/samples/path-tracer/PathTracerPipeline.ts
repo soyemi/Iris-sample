@@ -13,8 +13,8 @@ export class PathTracerPipeline extends iris.PipelineBase{
     private m_fbBack:WebGLFramebuffer;
     private m_fbFront:WebGLFramebuffer;
 
-    private m_texBack:iris.Texture;
-    private m_texFront:iris.Texture;
+    private m_texBack:iris.Texture2D;
+    private m_texFront:iris.Texture2D;
     private m_onfront:boolean = true;
 
     private static SH_PATHTRACER:iris.ShaderSource;
@@ -54,19 +54,19 @@ export class PathTracerPipeline extends iris.PipelineBase{
         let fbwidth = this.mainFrameBufferWidth;
         let fbheight =this.mainFrameBufferHeight;
 
-        let desc = new iris.TextureCreationDesc(gl.RGB,gl.RGB8,false);
-        this.m_texBack = iris.Texture.createTexture2D(fbwidth,fbheight,desc,this.glctx);
-        this.m_texFront = iris.Texture.createTexture2D(fbwidth,fbheight,desc,this.glctx);
+        let desc = new iris.Texture2DCreationDesc(gl.RGB,gl.RGB8,false);
+        this.m_texBack = iris.Texture2D.createTexture2D(fbwidth,fbheight,desc,this.glctx);
+        this.m_texFront = iris.Texture2D.createTexture2D(fbwidth,fbheight,desc,this.glctx);
 
         let fbback = gl.createFramebuffer();
         gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,fbback);
-        gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,this.m_texBack.rawtexture,0);
+        gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,this.m_texBack.getRawTexture(),0);
         gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,null);
         this.m_fbBack = fbback;
 
         let fbfront = gl.createFramebuffer();
         gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,fbfront);
-        gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,this.m_texFront.rawtexture,0);
+        gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,this.m_texFront.getRawTexture(),0);
         gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,null);
         this.m_fbFront = fbfront;
 
@@ -127,7 +127,7 @@ export class PathTracerPipeline extends iris.PipelineBase{
         this.m_fbFront = this.resizeBufferAndTex(this.m_fbFront,this.m_texFront,gl.COLOR_ATTACHMENT0,width,height);
     }
 
-    private resizeBufferAndTex(fb:WebGLFramebuffer,tex:iris.Texture,attatchment:number,w:number,h:number):WebGLFramebuffer{
+    private resizeBufferAndTex(fb:WebGLFramebuffer,tex:iris.Texture2D,attatchment:number,w:number,h:number):WebGLFramebuffer{
         const gl = this.gl;
         if(fb != null) gl.deleteFramebuffer(fb);
 
@@ -135,7 +135,7 @@ export class PathTracerPipeline extends iris.PipelineBase{
 
         fb = gl.createFramebuffer();
         gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, fb);
-        gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, attatchment, gl.TEXTURE_2D, tex.rawtexture, 0);
+        gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, attatchment, gl.TEXTURE_2D, tex.getRawTexture(), 0);
         gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, null);
 
         return fb;
