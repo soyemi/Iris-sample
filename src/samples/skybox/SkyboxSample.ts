@@ -113,7 +113,7 @@ export class SkyboxSample implements IProgram{
         const res = SkyboxSample.s_respack;
 
         this.m_skyboxProcedural = iris.Skybox.createFromProcedural();
-        let teximg360 = iris.Texture2D.createTexture2DImage(res.img360,iris.Texture2DCreationDesc.DefaultRGB,this.grender.glctx);
+        let teximg360 = iris.Texture2D.createTexture2DImage(res.img360,iris.TextureDescUtility.DefaultRGB,this.grender.glctx);
         this.m_tex360 = teximg360;
         this.m_skybox360 = iris.Skybox.createFromTex360(teximg360);
         let texcubemap = iris.TextureCubeMap.loadCubeMapImage(res.imgCubemap,this.grender.glctx);

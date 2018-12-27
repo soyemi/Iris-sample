@@ -54,7 +54,10 @@ export class PathTracerPipeline extends iris.PipelineBase{
         let fbwidth = this.mainFrameBufferWidth;
         let fbheight =this.mainFrameBufferHeight;
 
-        let desc = new iris.Texture2DCreationDesc(gl.RGB,gl.RGB8,false);
+        let desc:iris.TextureCreationDesc = {
+            format:gl.RGB,
+            internalformat:gl.RGB8
+        };
         this.m_texBack = iris.Texture2D.createTexture2D(fbwidth,fbheight,desc,this.glctx);
         this.m_texFront = iris.Texture2D.createTexture2D(fbwidth,fbheight,desc,this.glctx);
 
