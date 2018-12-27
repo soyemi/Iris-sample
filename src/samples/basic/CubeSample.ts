@@ -11,7 +11,6 @@ export class CubeSample implements IProgram{
     private m_scenemgr:SceneManager;
 
     private m_render:MeshRender;
-
     
 
     public onSetupRender(grender:GraphicsRender){

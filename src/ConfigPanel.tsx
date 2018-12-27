@@ -5,8 +5,6 @@ import "./ConfigPanel.less";
 export class ConfigObj{
     fieldmap:{[label:string]:ConfigFieldSetting} ={};
     public onConfigChange(key:string,newval:any){};
-
-
     public static getWgtFields(cfgobj: ConfigObj){
         let proto = Object.getPrototypeOf(cfgobj);
         var fieldmap:{[label:string]:ConfigFieldSetting} = proto.fieldmap;
@@ -62,7 +60,6 @@ export class ConfigPanel extends React.Component<{},ConfigPanelStates>{
         };
     }
 
-
     public render(){
         let fields:React.ReactNode[] = null;
         const cfgobj = this.state.cfgobj;
@@ -101,7 +98,6 @@ export class ConfigPanel extends React.Component<{},ConfigPanelStates>{
     
     public static FieldSelect(label:string,options:string[]){
         return function(target:ConfigObj,key:string){
-            console.log("regist selector", target,key);
             if(target.fieldmap == null) target.fieldmap = {};
             target.fieldmap[key] = {
                 type:ConfigFieldType.Select,
