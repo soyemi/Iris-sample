@@ -2,11 +2,8 @@
 import * as iris from 'iris-gl';
 import { CSGContainer, CSGBufferData } from "./PathTracer";
 
-
-
 const sh_pathtracer = require('./res/pathtracer.glsl');
 const sh_pathtracer_inc = require('./res/pathtracer.inc.glsl');
-
 
 export class PathTracerPipeline extends iris.PipelineBase{
 
@@ -45,14 +42,13 @@ export class PathTracerPipeline extends iris.PipelineBase{
     }
     public CSGBufferIndex:number;
 
-    public async init(){
-        if(this.m_inited) return;
-        super.init();
+    public async onInitGL(){
+        super.onInitGL();
 
         const gl = this.gl;
 
-        let fbwidth = this.mainFrameBufferWidth;
-        let fbheight =this.mainFrameBufferHeight;
+        let fbwidth = this.mainFBwidth;
+        let fbheight =this.mainFBheight;
 
         let desc:iris.TextureCreationDesc = {
             format:gl.RGB,

@@ -6,10 +6,8 @@ export class ShadowmapSamplePipeline extends iris.PipelineBase{
     private m_passOpaque:iris.PassOpaque;
 
     
-    public async init(){
-        if(this.m_inited) return;
-        super.init();
-        
+    public async onInitGL(){
+        super.onInitGL();
         this.m_passDepth = new iris.PassDepth(this);
         this.m_passOpaque = new iris.PassOpaque(this);
     }
