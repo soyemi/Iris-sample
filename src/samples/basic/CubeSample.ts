@@ -1,6 +1,6 @@
 import { IProgram } from '../SampleProgram';
 
-import { GraphicsRender,PipelineForwardZPrePass,Component, Scene, Camera, Mesh, Material, SceneManager, CameraFreeFly, Input, quat, Light,SceneBuilder, LightType, glmath, ShaderFX } from 'iris-gl';
+import { GraphicsRender,PipelineForwardZPrePass,Component, Scene, Camera, Mesh, Material, SceneManager, CameraFreeFly, Input, quat, Light,SceneBuilder, LightType, glmath, ShaderFX, GL } from 'iris-gl';
 import { MeshRender } from 'iris-gl/dist/MeshRender';
 
 export class CubeSample implements IProgram{
@@ -17,7 +17,6 @@ export class CubeSample implements IProgram{
         this.m_scenemgr = new SceneManager();
         this.grender = grender;
         grender.setPipeline(new PipelineForwardZPrePass());
-
     }
 
 
@@ -59,10 +58,9 @@ export class CubeSample implements IProgram{
 
     public onFrame(ts:number){
         const grender = this.grender;
-        const gl = grender.glctx.gl;
-
-        gl.clearColor(0,1,1,1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
+        const glctx = grender.glctx;
+        glctx.clearColor(0,1,1,1);
+        glctx.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 
         const scene = this.m_scene;
         const scenemgr = this.m_scenemgr;

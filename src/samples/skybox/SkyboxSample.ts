@@ -81,14 +81,13 @@ export class SkyboxSample implements IProgram{
         this.grender = grender;
         grender.setPipeline(new PipelineForwardZPrePass());
 
-        const gl = grender.glctx.gl;
-        gl.clearColor(0.5,0.5,0.5,1.0);
+        const glctx = grender.glctx;
+        glctx.clearColor(0.5,0.5,0.5,1.0);
     }
 
     public getCfgObject():ConfigObj{
         return this.m_configObject;
     }
-
 
     public setSkyboxType(type:string){
         const camera = this.m_camera;
