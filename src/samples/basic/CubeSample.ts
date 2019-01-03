@@ -1,7 +1,9 @@
 import { IProgram } from '../SampleProgram';
 
-import { GraphicsRender,PipelineForwardZPrePass,Component, Scene, Camera, Mesh, Material, SceneManager, CameraFreeFly, Input, quat, Light,SceneBuilder, LightType, glmath, ShaderFX, GL } from 'iris-gl';
+import { GraphicsRender,Component, Scene, Camera, Mesh, Material, SceneManager, CameraFreeFly, Input, quat, Light,SceneBuilder, LightType, glmath, ShaderFX, StackedPipeline, PassSkybox, PassOpaque, vec4 } from 'iris-gl';
 import { MeshRender } from 'iris-gl/dist/MeshRender';
+
+import * as iris from 'iris-gl';
 
 export class CubeSample implements IProgram{
 
@@ -16,9 +18,19 @@ export class CubeSample implements IProgram{
     public onSetupRender(grender:GraphicsRender){
         this.m_scenemgr = new SceneManager();
         this.grender = grender;
-        grender.setPipeline(new PipelineForwardZPrePass());
+        const gl = iris.GL;
+        grender.setPipeline(new StackedPipeline({
+            passes:[
+                PassSkybox,
+                PassOpaque
+            ],
+            clearinfo:{
+                depth:100,
+                color:new vec4([0,0,0,0]),
+                clearMask: gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT
+            }
+        }));
     }
-
 
     public getCfgObject(){ return null;}
 
@@ -33,7 +45,12 @@ export class CubeSample implements IProgram{
                         Camera.persepctive(null,60, 400.0 / 300.0, 0.5, 1000),
                         new CameraFreeFly()
                     ],
-                    trs: {pos:[0,1,0]}
+                    trs: {pos:[0,1,0]},
+                    oncreate:(g)=>{
+                        let cam = g.getComponent(iris.Camera);
+                        cam.clearType = iris.ClearType.Skybox;
+                        cam.skybox = iris.Skybox.createFromProcedural();
+                    }
                 },
                 "cube":{
                     comp: [<Component>{
@@ -58,10 +75,6 @@ export class CubeSample implements IProgram{
 
     public onFrame(ts:number){
         const grender = this.grender;
-        const glctx = grender.glctx;
-        glctx.clearColor(0,1,1,1);
-        glctx.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
-
         const scene = this.m_scene;
         const scenemgr = this.m_scenemgr;
         scenemgr.onFrame(scene);

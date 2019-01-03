@@ -1,6 +1,5 @@
 import { IProgram } from '../SampleProgram';
 import * as iris from 'iris-gl';
-import { PipelineForwardZPrePass, SceneManager, Texture2D, TextureCubeMap } from 'iris-gl';
 import { ConfigObj, ConfigPanel } from 'src/ConfigPanel';
 import { SampleResPack } from '../SampleResPack';
 
@@ -60,8 +59,8 @@ export class SkyboxSample implements IProgram{
     private m_skybox360:iris.Skybox;
     private m_skyboxCubemap:iris.Skybox;
 
-    private m_tex360:Texture2D;
-    private m_texcubemap:TextureCubeMap;
+    private m_tex360:iris.Texture2D;
+    private m_texcubemap:iris.TextureCubeMap;
 
     private m_camera:iris.Camera;
 
@@ -73,13 +72,19 @@ export class SkyboxSample implements IProgram{
     }
 
     public onSetupRender(grender:iris.GraphicsRender){
-        this.m_scenemgr = new SceneManager();
+        this.m_scenemgr = new iris.SceneManager();
         let cfgobj = new SkyboxSampleCfgObj();
         cfgobj.cursample = this;
         this.m_configObject = cfgobj;
 
         this.grender = grender;
-        grender.setPipeline(new PipelineForwardZPrePass());
+        grender.setPipeline(new iris.StackedPipeline({
+            passes: [iris.PassSkybox],
+            clearinfo:{
+                color:new iris.vec4([0.5,0.5,0.5,1.0]),
+                clearMask: iris.GL.COLOR_BUFFER_BIT | iris.GL.DEPTH_BUFFER_BIT
+            },
+        }));
 
         const glctx = grender.glctx;
         glctx.clearColor(0.5,0.5,0.5,1.0);

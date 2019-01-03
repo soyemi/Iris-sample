@@ -142,6 +142,7 @@ export class PathTracerPipeline extends iris.PipelineBase{
 
     public toggleRenderMode(){
         this.drawRaster = ! this.drawRaster;
+
     }
 
     public release(){
@@ -186,17 +187,19 @@ export class PathTracerPipeline extends iris.PipelineBase{
         csgcontainer.data.setIter(this.m_frame);
         csgcontainer.updateUniformData(this.m_csgbuffer,gl);
 
-        const statecache = this.stateCache;
 
         let drawRaster = this.drawRaster;
         let onfront = this.m_onfront;
 
+        const glctx = this.glctx;
+
         if(!drawRaster && this.m_frame < this.m_maxFrame){
+
             const render = this.m_meshrender;
             const mat = render.material;
             mat.setTexture(iris.ShaderFX.UNIFORM_MAIN_TEXTURE,onfront? this.m_texBack: this.m_texFront);
             mat.setFloat('seed',Math.random());
-            statecache.apply(this.m_stateTracer);
+            glctx.pipelineState(this.m_stateTracer);
             gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,onfront? this.m_fbFront : this.m_fbBack);
             this.drawMeshRender(this.m_meshrender);
             gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,null);
@@ -208,7 +211,7 @@ export class PathTracerPipeline extends iris.PipelineBase{
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         if(drawRaster){
-            statecache.apply(this.m_stateRaster);
+            glctx.pipelineState(this.m_stateRaster);
             this.m_passOpaque.render(scene);
         }
         else{

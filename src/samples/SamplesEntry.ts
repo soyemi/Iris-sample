@@ -1,15 +1,18 @@
 import { CubeSample } from './basic/CubeSample';
 import { PathTracer } from "./path-tracer/PathTracer";
-import { GLTFSample } from './gltf/GLTFSample';
 import { SkyboxSample } from './skybox/SkyboxSample';
-import { ShadowmapSample } from './shadowmap/ShadowmapSample';
-import { RenderPipelineSample } from './renderpipeline/RenderPipelineSample';
+import { LightingSample } from './lighting/LightingSample';
+// import { ShadowmapSample } from './shadowmap/ShadowmapSample';
+// import { RenderPipelineSample } from './renderpipeline/RenderPipelineSample';
+// import { GLTFSample } from './gltf/GLTFSample';
+
 
 export const SAMPLES_ENTRY = {
     "skybox":SkyboxSample,
-    "gltf-assets":GLTFSample,
+    // "gltf-assets":GLTFSample,
     "cube":CubeSample,
     "path-tracer":PathTracer,
-    "shadowmap":ShadowmapSample,
-    "render-pipeline": RenderPipelineSample,
+    "lighting": LightingSample,
+    // "shadowmap":ShadowmapSample,
+    // "render-pipeline": RenderPipelineSample,
 }

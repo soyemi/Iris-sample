@@ -77,3 +77,8 @@
   right:  0px;
   bottom: 0px;
 }
+
+*{
+  -webkit-user-select: none;
+  user-select: none;
+}
