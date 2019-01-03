@@ -1,23 +1,40 @@
+import { GraphicsRender, PipelineForwardZPrePass, Scene,glmath, SceneManager, Camera, CameraFreeFly, GLTFtool, GLTFSceneBuilder, Utility, ClearType, GameObject, Light, vec3, quat, GLTFdata } from 'iris-gl';
 import { IProgram } from '../SampleProgram';
-import { GraphicsRender, PipelineForwardZPrePass, Scene,glmath, SceneManager, Camera, CameraFreeFly, GLTFtool, GLTFSceneBuilder, Utility, ClearType, GameObject, Light, vec3, quat } from 'iris-gl';
+import { SampleResPack } from '../SampleResPack';
 
 const scene_glb = require('./res/scene.glb');
+
+class GLTFSampleResPack extends SampleResPack{
+    public glftdata:GLTFdata;
+
+    public constructor(){
+        super();
+    }
+    protected async doLoad(): Promise<boolean> {
+        this.glftdata = await GLTFtool.LoadGLTFBinary(scene_glb);
+        return true;
+    }
+}
 
 export class GLTFSample implements IProgram {
     private grender : GraphicsRender;
     private pipeline : PipelineForwardZPrePass;
     private m_scene : Scene;
     private m_sceneMgr : SceneManager;
+    public static s_respack: GLTFSampleResPack = new GLTFSampleResPack();
 
     onSetupRender(grender : GraphicsRender) {
+        this.m_sceneMgr = new SceneManager();
         this.grender = grender;
         let pipeline = new PipelineForwardZPrePass();
         grender.setPipeline(pipeline);
         this.pipeline = pipeline;
     }
 
-    async onInit() {
-        this.m_sceneMgr = new SceneManager();
+    public getCfgObject(){ return null;}
+
+    public onLoadRes(){
+        return  GLTFSample.s_respack;
     }
 
     async onSetupScene() {
@@ -25,7 +42,8 @@ export class GLTFSample implements IProgram {
 
         let scene = new Scene();
         this.m_scene= scene;
-        let gltfdata = await GLTFtool.LoadGLTFBinary(scene_glb);
+
+        let gltfdata = GLTFSample.s_respack.glftdata;
         let sceneBuilder = new GLTFSceneBuilder(gltfdata,pipeline.GLCtx,this.grender.shaderLib);
         let gobj = sceneBuilder.createScene()
 
@@ -64,5 +82,11 @@ export class GLTFSample implements IProgram {
         grender.render(scene,ts);
         grender.renderToCanvas();
     }
-    onRelease() {}
+    onRelease() {
+        this.pipeline.release();
+        this.pipeline = null;
+        this.grender.release();
+        this.grender = null;
+
+    }
 }

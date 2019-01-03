@@ -1,8 +1,11 @@
 import { GraphicsRender,GLUtility, FrameTimer, Input, WindowUtility} from 'iris-gl';
 import { SAMPLES_ENTRY } from './SamplesEntry';
+import { SampleResPack } from './SampleResPack';
+import { ConfigObj } from 'src/ConfigPanel';
 
 export interface IProgram{
-    onInit();
+    onLoadRes():SampleResPack;
+    getCfgObject();
     onSetupRender(grender:GraphicsRender);
     onSetupScene();
     onFrame(ts:number);
@@ -18,6 +21,10 @@ export class SampleRunner{
     private m_graphicsRender:GraphicsRender;
     private m_curprogram:IProgram;
     private m_timer:FrameTimer;
+
+    private m_cursname:string;
+
+    public get cursname():string {return this.m_cursname;}
 
     public static get Samples():{[name:string]:any}{
         return SampleRunner.s_samples;
@@ -78,15 +85,16 @@ export class SampleRunner{
 
     }
 
-    public async LoadSample(sname:string):Promise<boolean>{
+
+    public async LoadSample(sname:string):Promise<[boolean,ConfigObj]>{
 
         let sproto = SampleRunner.s_samples[sname];
-        if(sproto == null) return false;
+        if(sproto == null) return [false,null];
 
         let curprogram = this.m_curprogram;
         if(curprogram !=null){
             if(Object.getPrototypeOf(curprogram) == sproto){
-                return false;
+                return [false,null];
             }
             curprogram.onRelease();
             this.m_curprogram = null;
@@ -94,7 +102,13 @@ export class SampleRunner{
 
         const grender= this.m_graphicsRender;
         let program = <IProgram>Object.create(sproto);
-        await program.onInit();
+
+        let res = program.onLoadRes();
+        if(res != null && !res.isLoaded){
+            let loaded = await res.load();
+            if(!loaded) return [false,null];
+        }
+
         await program.onSetupRender(grender);
         await program.onSetupScene();
 
@@ -102,7 +116,9 @@ export class SampleRunner{
 
         this.onResize();
 
-        return true;
+        this.m_cursname = sname;
+
+        return [true,program.getCfgObject()];
     }
 }
 

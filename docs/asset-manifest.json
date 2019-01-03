@@ -1,9 +1,14 @@
 {
-  "main.css": "static/css/main.ca43302b.css",
-  "main.css.map": "static/css/main.ca43302b.css.map",
-  "main.js": "static/js/main.975f43d9.js",
-  "main.js.map": "static/js/main.975f43d9.js.map",
+  "main.css": "static/css/main.9d4333b0.css",
+  "main.css.map": "static/css/main.9d4333b0.css.map",
+  "main.js": "static/js/main.0c5de0d1.js",
+  "main.js.map": "static/js/main.0c5de0d1.js.map",
+  "static\\media\\ConfigPanel.less": "static/media/ConfigPanel.2e510993.less",
+  "static\\media\\day360.jpg": "static/media/day360.45b967d9.jpg",
   "static\\media\\pathtracer.glsl": "static/media/pathtracer.7f4bba40.glsl",
   "static\\media\\pathtracer.inc.glsl": "static/media/pathtracer.inc.3b0be1af.glsl",
-  "static\\media\\scene.glb": "static/media/scene.c81d3cf2.glb"
+  "static\\media\\peaks_bk.jpg": "static/media/peaks_bk.0f7cc4a3.jpg",
+  "static\\media\\peaks_ft.jpg": "static/media/peaks_ft.8340a1ec.jpg",
+  "static\\media\\peaks_lf.jpg": "static/media/peaks_lf.d99c45c1.jpg",
+  "static\\media\\peaks_rt.jpg": "static/media/peaks_rt.6002487f.jpg"
 }
